@@ -1,0 +1,1864 @@
+[
+  {
+    "id": "cfbd:team:2000",
+    "name": "Abilene Christian",
+    "abbreviation": "ACU",
+    "color": "#592d82",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2000.png"
+  },
+  {
+    "id": "cfbd:team:2005",
+    "name": "Air Force",
+    "abbreviation": "AF",
+    "color": "#003594",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2005.png"
+  },
+  {
+    "id": "cfbd:team:2006",
+    "name": "Akron",
+    "abbreviation": "AKR",
+    "color": "#041e42",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2006.png"
+  },
+  {
+    "id": "cfbd:team:333",
+    "name": "Alabama",
+    "abbreviation": "ALA",
+    "color": "#9e1b32",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/333.png"
+  },
+  {
+    "id": "cfbd:team:2010",
+    "name": "Alabama A&M",
+    "abbreviation": "AAMU",
+    "color": "#790000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2010.png"
+  },
+  {
+    "id": "cfbd:team:2011",
+    "name": "Alabama State",
+    "abbreviation": "ALST",
+    "color": "#e9a900",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2011.png"
+  },
+  {
+    "id": "cfbd:team:2016",
+    "name": "Alcorn State",
+    "abbreviation": "ALCN",
+    "color": "#4b0058",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2016.png"
+  },
+  {
+    "id": "cfbd:team:2026",
+    "name": "App State",
+    "abbreviation": "APP",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2026.png"
+  },
+  {
+    "id": "cfbd:team:12",
+    "name": "Arizona",
+    "abbreviation": "ARIZ",
+    "color": "#cc0033",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/12.png"
+  },
+  {
+    "id": "cfbd:team:9",
+    "name": "Arizona State",
+    "abbreviation": "ASU",
+    "color": "#ffc627",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/9.png"
+  },
+  {
+    "id": "cfbd:team:8",
+    "name": "Arkansas",
+    "abbreviation": "ARK",
+    "color": "#a32136",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/8.png"
+  },
+  {
+    "id": "cfbd:team:2029",
+    "name": "Arkansas-Pine Bluff",
+    "abbreviation": "UAPB",
+    "color": "#e0aa0f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2029.png"
+  },
+  {
+    "id": "cfbd:team:2032",
+    "name": "Arkansas State",
+    "abbreviation": "ARST",
+    "color": "#cc092f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2032.png"
+  },
+  {
+    "id": "cfbd:team:349",
+    "name": "Army",
+    "abbreviation": "ARMY",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/349.png"
+  },
+  {
+    "id": "cfbd:team:2",
+    "name": "Auburn",
+    "abbreviation": "AUB",
+    "color": "#0c2340",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2.png"
+  },
+  {
+    "id": "cfbd:team:2046",
+    "name": "Austin Peay",
+    "abbreviation": "APSU",
+    "color": "#8e0b0b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2046.png"
+  },
+  {
+    "id": "cfbd:team:2050",
+    "name": "Ball State",
+    "abbreviation": "BALL",
+    "color": "#ba0c2f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2050.png"
+  },
+  {
+    "id": "cfbd:team:239",
+    "name": "Baylor",
+    "abbreviation": "BAY",
+    "color": "#154734",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/239.png"
+  },
+  {
+    "id": "cfbd:team:2065",
+    "name": "Bethune-Cookman",
+    "abbreviation": "BCU",
+    "color": "#7b1831",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2065.png"
+  },
+  {
+    "id": "cfbd:team:68",
+    "name": "Boise State",
+    "abbreviation": "BOIS",
+    "color": "#0033a0",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/68.png"
+  },
+  {
+    "id": "cfbd:team:103",
+    "name": "Boston College",
+    "abbreviation": "BC",
+    "color": "#8c2232",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/103.png"
+  },
+  {
+    "id": "cfbd:team:189",
+    "name": "Bowling Green",
+    "abbreviation": "BGSU",
+    "color": "#fd5000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/189.png"
+  },
+  {
+    "id": "cfbd:team:225",
+    "name": "Brown",
+    "abbreviation": "BRWN",
+    "color": "#411e09",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/225.png"
+  },
+  {
+    "id": "cfbd:team:2803",
+    "name": "Bryant",
+    "abbreviation": "BRY",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2803.png"
+  },
+  {
+    "id": "cfbd:team:2083",
+    "name": "Bucknell",
+    "abbreviation": "BUCK",
+    "color": "#000060",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2083.png"
+  },
+  {
+    "id": "cfbd:team:2084",
+    "name": "Buffalo",
+    "abbreviation": "BUF",
+    "color": "#005bbb",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2084.png"
+  },
+  {
+    "id": "cfbd:team:2086",
+    "name": "Butler",
+    "abbreviation": "BTLR",
+    "color": "#0d1361",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2086.png"
+  },
+  {
+    "id": "cfbd:team:252",
+    "name": "BYU",
+    "abbreviation": "BYU",
+    "color": "#003da5",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/252.png"
+  },
+  {
+    "id": "cfbd:team:25",
+    "name": "California",
+    "abbreviation": "CAL",
+    "color": "#041e42",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/25.png"
+  },
+  {
+    "id": "cfbd:team:13",
+    "name": "Cal Poly",
+    "abbreviation": "CP",
+    "color": "#1E4D2B",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/13.png"
+  },
+  {
+    "id": "cfbd:team:2097",
+    "name": "Campbell",
+    "abbreviation": "CAM",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2097.png"
+  },
+  {
+    "id": "cfbd:team:2110",
+    "name": "Central Arkansas",
+    "abbreviation": "CARK",
+    "color": "#a7a9ac",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2110.png"
+  },
+  {
+    "id": "cfbd:team:2115",
+    "name": "Central Connecticut",
+    "abbreviation": "CCSU",
+    "color": "#1B49A2",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2115.png"
+  },
+  {
+    "id": "cfbd:team:2117",
+    "name": "Central Michigan",
+    "abbreviation": "CMU",
+    "color": "#6a0032",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2117.png"
+  },
+  {
+    "id": "cfbd:team:2127",
+    "name": "Charleston Southern",
+    "abbreviation": "CHSO",
+    "color": "#2e3192",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2127.png"
+  },
+  {
+    "id": "cfbd:team:2429",
+    "name": "Charlotte",
+    "abbreviation": "CLT",
+    "color": "#005035",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2429.png"
+  },
+  {
+    "id": "cfbd:team:236",
+    "name": "Chattanooga",
+    "abbreviation": "UTC",
+    "color": "#00386b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/236.png"
+  },
+  {
+    "id": "cfbd:team:2130",
+    "name": "Chicago State",
+    "abbreviation": "",
+    "color": "#null",
+    "logo": ""
+  },
+  {
+    "id": "cfbd:team:2132",
+    "name": "Cincinnati",
+    "abbreviation": "CIN",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2132.png"
+  },
+  {
+    "id": "cfbd:team:228",
+    "name": "Clemson",
+    "abbreviation": "CLEM",
+    "color": "#f56600",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/228.png"
+  },
+  {
+    "id": "cfbd:team:324",
+    "name": "Coastal Carolina",
+    "abbreviation": "CCU",
+    "color": "#006f71",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/324.png"
+  },
+  {
+    "id": "cfbd:team:2142",
+    "name": "Colgate",
+    "abbreviation": "COLG",
+    "color": "#821019",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2142.png"
+  },
+  {
+    "id": "cfbd:team:38",
+    "name": "Colorado",
+    "abbreviation": "COLO",
+    "color": "#cfb87c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/38.png"
+  },
+  {
+    "id": "cfbd:team:36",
+    "name": "Colorado State",
+    "abbreviation": "CSU",
+    "color": "#1e4d2b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/36.png"
+  },
+  {
+    "id": "cfbd:team:171",
+    "name": "Columbia",
+    "abbreviation": "COLU",
+    "color": "#7ba4db",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/171.png"
+  },
+  {
+    "id": "cfbd:team:172",
+    "name": "Cornell",
+    "abbreviation": "COR",
+    "color": "#b31b1b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/172.png"
+  },
+  {
+    "id": "cfbd:team:159",
+    "name": "Dartmouth",
+    "abbreviation": "DART",
+    "color": "#005730",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/159.png"
+  },
+  {
+    "id": "cfbd:team:2166",
+    "name": "Davidson",
+    "abbreviation": "DAV",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2166.png"
+  },
+  {
+    "id": "cfbd:team:2168",
+    "name": "Dayton",
+    "abbreviation": "DAY",
+    "color": "#004B8D",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2168.png"
+  },
+  {
+    "id": "cfbd:team:48",
+    "name": "Delaware",
+    "abbreviation": "DEL",
+    "color": "#00539f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/48.png"
+  },
+  {
+    "id": "cfbd:team:2169",
+    "name": "Delaware State",
+    "abbreviation": "DSU",
+    "color": "#009cdb",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2169.png"
+  },
+  {
+    "id": "cfbd:team:2181",
+    "name": "Drake",
+    "abbreviation": "DRKE",
+    "color": "#005596",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2181.png"
+  },
+  {
+    "id": "cfbd:team:150",
+    "name": "Duke",
+    "abbreviation": "DUKE",
+    "color": "#00539b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/150.png"
+  },
+  {
+    "id": "cfbd:team:2184",
+    "name": "Duquesne",
+    "abbreviation": "DUQ",
+    "color": "#002D62",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2184.png"
+  },
+  {
+    "id": "cfbd:team:151",
+    "name": "East Carolina",
+    "abbreviation": "ECU",
+    "color": "#592a8a",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/151.png"
+  },
+  {
+    "id": "cfbd:team:2197",
+    "name": "Eastern Illinois",
+    "abbreviation": "EIU",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2197.png"
+  },
+  {
+    "id": "cfbd:team:2198",
+    "name": "Eastern Kentucky",
+    "abbreviation": "EKU",
+    "color": "#660819",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2198.png"
+  },
+  {
+    "id": "cfbd:team:2199",
+    "name": "Eastern Michigan",
+    "abbreviation": "EMU",
+    "color": "#046a38",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2199.png"
+  },
+  {
+    "id": "cfbd:team:331",
+    "name": "Eastern Washington",
+    "abbreviation": "EWU",
+    "color": "#a10022",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/331.png"
+  },
+  {
+    "id": "cfbd:team:2193",
+    "name": "East Tennessee State",
+    "abbreviation": "ETSU",
+    "color": "#002d61",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2193.png"
+  },
+  {
+    "id": "cfbd:team:2837",
+    "name": "East Texas A&M",
+    "abbreviation": "ETAM",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2837.png"
+  },
+  {
+    "id": "cfbd:team:2210",
+    "name": "Elon",
+    "abbreviation": "ELON",
+    "color": "#020303",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2210.png"
+  },
+  {
+    "id": "cfbd:team:57",
+    "name": "Florida",
+    "abbreviation": "FLA",
+    "color": "#0021a5",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/57.png"
+  },
+  {
+    "id": "cfbd:team:50",
+    "name": "Florida A&M",
+    "abbreviation": "FAMU",
+    "color": "#F89728",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/50.png"
+  },
+  {
+    "id": "cfbd:team:2226",
+    "name": "Florida Atlantic",
+    "abbreviation": "FAU",
+    "color": "#003366",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2226.png"
+  },
+  {
+    "id": "cfbd:team:2229",
+    "name": "Florida International",
+    "abbreviation": "FIU",
+    "color": "#091f3f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2229.png"
+  },
+  {
+    "id": "cfbd:team:52",
+    "name": "Florida State",
+    "abbreviation": "FSU",
+    "color": "#782f40",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/52.png"
+  },
+  {
+    "id": "cfbd:team:2230",
+    "name": "Fordham",
+    "abbreviation": "FOR",
+    "color": "#830032",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2230.png"
+  },
+  {
+    "id": "cfbd:team:278",
+    "name": "Fresno State",
+    "abbreviation": "FRES",
+    "color": "#c41230",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/278.png"
+  },
+  {
+    "id": "cfbd:team:231",
+    "name": "Furman",
+    "abbreviation": "FUR",
+    "color": "#582c83",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/231.png"
+  },
+  {
+    "id": "cfbd:team:2241",
+    "name": "Gardner-Webb",
+    "abbreviation": "GWEB",
+    "color": "#c12535",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2241.png"
+  },
+  {
+    "id": "cfbd:team:46",
+    "name": "Georgetown",
+    "abbreviation": "GTWN",
+    "color": "#110E42",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/46.png"
+  },
+  {
+    "id": "cfbd:team:61",
+    "name": "Georgia",
+    "abbreviation": "UGA",
+    "color": "#ba0c2f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/61.png"
+  },
+  {
+    "id": "cfbd:team:290",
+    "name": "Georgia Southern",
+    "abbreviation": "GASO",
+    "color": "#041e42",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/290.png"
+  },
+  {
+    "id": "cfbd:team:2247",
+    "name": "Georgia State",
+    "abbreviation": "GAST",
+    "color": "#0039a6",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2247.png"
+  },
+  {
+    "id": "cfbd:team:59",
+    "name": "Georgia Tech",
+    "abbreviation": "GT",
+    "color": "#b3a369",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/59.png"
+  },
+  {
+    "id": "cfbd:team:2755",
+    "name": "Grambling",
+    "abbreviation": "GRAM",
+    "color": "#ee8601",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2755.png"
+  },
+  {
+    "id": "cfbd:team:2261",
+    "name": "Hampton",
+    "abbreviation": "HAMP",
+    "color": "#0067AC",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2261.png"
+  },
+  {
+    "id": "cfbd:team:108",
+    "name": "Harvard",
+    "abbreviation": "HARV",
+    "color": "#990000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/108.png"
+  },
+  {
+    "id": "cfbd:team:62",
+    "name": "Hawai'i",
+    "abbreviation": "HAW",
+    "color": "#024731",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/62.png"
+  },
+  {
+    "id": "cfbd:team:107",
+    "name": "Holy Cross",
+    "abbreviation": "HC",
+    "color": "#582c83",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/107.png"
+  },
+  {
+    "id": "cfbd:team:248",
+    "name": "Houston",
+    "abbreviation": "HOU",
+    "color": "#c8102e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/248.png"
+  },
+  {
+    "id": "cfbd:team:2277",
+    "name": "Houston Christian",
+    "abbreviation": "HCU",
+    "color": "#00539c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2277.png"
+  },
+  {
+    "id": "cfbd:team:47",
+    "name": "Howard",
+    "abbreviation": "HOW",
+    "color": "#003a63",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/47.png"
+  },
+  {
+    "id": "cfbd:team:70",
+    "name": "Idaho",
+    "abbreviation": "IDHO",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/70.png"
+  },
+  {
+    "id": "cfbd:team:304",
+    "name": "Idaho State",
+    "abbreviation": "IDST",
+    "color": "#ef8c00",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/304.png"
+  },
+  {
+    "id": "cfbd:team:356",
+    "name": "Illinois",
+    "abbreviation": "ILL",
+    "color": "#ff5f05",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/356.png"
+  },
+  {
+    "id": "cfbd:team:2287",
+    "name": "Illinois State",
+    "abbreviation": "ILST",
+    "color": "#CE1126",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2287.png"
+  },
+  {
+    "id": "cfbd:team:2916",
+    "name": "Incarnate Word",
+    "abbreviation": "UIW",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2916.png"
+  },
+  {
+    "id": "cfbd:team:84",
+    "name": "Indiana",
+    "abbreviation": "IU",
+    "color": "#990000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/84.png"
+  },
+  {
+    "id": "cfbd:team:282",
+    "name": "Indiana State",
+    "abbreviation": "INST",
+    "color": "#00669a",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/282.png"
+  },
+  {
+    "id": "cfbd:team:2294",
+    "name": "Iowa",
+    "abbreviation": "IOWA",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2294.png"
+  },
+  {
+    "id": "cfbd:team:66",
+    "name": "Iowa State",
+    "abbreviation": "ISU",
+    "color": "#c8102e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/66.png"
+  },
+  {
+    "id": "cfbd:team:2296",
+    "name": "Jackson State",
+    "abbreviation": "JKST",
+    "color": "#123297",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2296.png"
+  },
+  {
+    "id": "cfbd:team:55",
+    "name": "Jacksonville State",
+    "abbreviation": "JXST",
+    "color": "#cc0000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/55.png"
+  },
+  {
+    "id": "cfbd:team:256",
+    "name": "James Madison",
+    "abbreviation": "JMU",
+    "color": "#450084",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/256.png"
+  },
+  {
+    "id": "cfbd:team:2305",
+    "name": "Kansas",
+    "abbreviation": "KU",
+    "color": "#0051ba",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2305.png"
+  },
+  {
+    "id": "cfbd:team:2306",
+    "name": "Kansas State",
+    "abbreviation": "KSU",
+    "color": "#512888",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2306.png"
+  },
+  {
+    "id": "cfbd:team:338",
+    "name": "Kennesaw State",
+    "abbreviation": "KENN",
+    "color": "#fdbb30",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/338.png"
+  },
+  {
+    "id": "cfbd:team:2309",
+    "name": "Kent State",
+    "abbreviation": "KENT",
+    "color": "#002664",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2309.png"
+  },
+  {
+    "id": "cfbd:team:96",
+    "name": "Kentucky",
+    "abbreviation": "UK",
+    "color": "#0033a0",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/96.png"
+  },
+  {
+    "id": "cfbd:team:322",
+    "name": "Lafayette",
+    "abbreviation": "LAF",
+    "color": "#790000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/322.png"
+  },
+  {
+    "id": "cfbd:team:2320",
+    "name": "Lamar",
+    "abbreviation": "LAM",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2320.png"
+  },
+  {
+    "id": "cfbd:team:2329",
+    "name": "Lehigh",
+    "abbreviation": "LEH",
+    "color": "#6c2b2a",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2329.png"
+  },
+  {
+    "id": "cfbd:team:2335",
+    "name": "Liberty",
+    "abbreviation": "LIB",
+    "color": "#0a254e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2335.png"
+  },
+  {
+    "id": "cfbd:team:2815",
+    "name": "Lindenwood",
+    "abbreviation": "LIN",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2815.png"
+  },
+  {
+    "id": "cfbd:team:2341",
+    "name": "Long Island University",
+    "abbreviation": "LIU",
+    "color": "#null",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2341.png"
+  },
+  {
+    "id": "cfbd:team:309",
+    "name": "Louisiana",
+    "abbreviation": "UL",
+    "color": "#ce181e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/309.png"
+  },
+  {
+    "id": "cfbd:team:2348",
+    "name": "Louisiana Tech",
+    "abbreviation": "LT",
+    "color": "#003087",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2348.png"
+  },
+  {
+    "id": "cfbd:team:97",
+    "name": "Louisville",
+    "abbreviation": "LOU",
+    "color": "#c9001f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/97.png"
+  },
+  {
+    "id": "cfbd:team:99",
+    "name": "LSU",
+    "abbreviation": "LSU",
+    "color": "#461d7c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/99.png"
+  },
+  {
+    "id": "cfbd:team:311",
+    "name": "Maine",
+    "abbreviation": "ME",
+    "color": "#127dbe",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/311.png"
+  },
+  {
+    "id": "cfbd:team:2368",
+    "name": "Marist",
+    "abbreviation": "MRST",
+    "color": "#e53730",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2368.png"
+  },
+  {
+    "id": "cfbd:team:276",
+    "name": "Marshall",
+    "abbreviation": "MRSH",
+    "color": "#00b140",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/276.png"
+  },
+  {
+    "id": "cfbd:team:120",
+    "name": "Maryland",
+    "abbreviation": "MD",
+    "color": "#ce1126",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/120.png"
+  },
+  {
+    "id": "cfbd:team:113",
+    "name": "Massachusetts",
+    "abbreviation": "MASS",
+    "color": "#881c1c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/113.png"
+  },
+  {
+    "id": "cfbd:team:2377",
+    "name": "McNeese",
+    "abbreviation": "MCN",
+    "color": "#00529C",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2377.png"
+  },
+  {
+    "id": "cfbd:team:235",
+    "name": "Memphis",
+    "abbreviation": "MEM",
+    "color": "#00498f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/235.png"
+  },
+  {
+    "id": "cfbd:team:2382",
+    "name": "Mercer",
+    "abbreviation": "MER",
+    "color": "#ff7f29",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2382.png"
+  },
+  {
+    "id": "cfbd:team:2385",
+    "name": "Mercyhurst",
+    "abbreviation": "MERC",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2385.png"
+  },
+  {
+    "id": "cfbd:team:2771",
+    "name": "Merrimack",
+    "abbreviation": "MRMK",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2771.png"
+  },
+  {
+    "id": "cfbd:team:2390",
+    "name": "Miami",
+    "abbreviation": "MIA",
+    "color": "#f47321",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2390.png"
+  },
+  {
+    "id": "cfbd:team:193",
+    "name": "Miami (OH)",
+    "abbreviation": "M-OH",
+    "color": "#c41230",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/193.png"
+  },
+  {
+    "id": "cfbd:team:130",
+    "name": "Michigan",
+    "abbreviation": "MICH",
+    "color": "#00274c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/130.png"
+  },
+  {
+    "id": "cfbd:team:127",
+    "name": "Michigan State",
+    "abbreviation": "MSU",
+    "color": "#173f35",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/127.png"
+  },
+  {
+    "id": "cfbd:team:2393",
+    "name": "Middle Tennessee",
+    "abbreviation": "MTSU",
+    "color": "#036eb7",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2393.png"
+  },
+  {
+    "id": "cfbd:team:135",
+    "name": "Minnesota",
+    "abbreviation": "MINN",
+    "color": "#7a0019",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/135.png"
+  },
+  {
+    "id": "cfbd:team:344",
+    "name": "Mississippi State",
+    "abbreviation": "MSST",
+    "color": "#5d1725",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/344.png"
+  },
+  {
+    "id": "cfbd:team:2400",
+    "name": "Mississippi Valley State",
+    "abbreviation": "MVSU",
+    "color": "#005328",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2400.png"
+  },
+  {
+    "id": "cfbd:team:142",
+    "name": "Missouri",
+    "abbreviation": "MIZ",
+    "color": "#f1b82d",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/142.png"
+  },
+  {
+    "id": "cfbd:team:2623",
+    "name": "Missouri State",
+    "abbreviation": "MOST",
+    "color": "#5e0009",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2623.png"
+  },
+  {
+    "id": "cfbd:team:2405",
+    "name": "Monmouth",
+    "abbreviation": "MONM",
+    "color": "#051844",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2405.png"
+  },
+  {
+    "id": "cfbd:team:149",
+    "name": "Montana",
+    "abbreviation": "MONT",
+    "color": "#751D4A",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/149.png"
+  },
+  {
+    "id": "cfbd:team:147",
+    "name": "Montana State",
+    "abbreviation": "MTST",
+    "color": "#00205c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/147.png"
+  },
+  {
+    "id": "cfbd:team:2413",
+    "name": "Morehead State",
+    "abbreviation": "MORE",
+    "color": "#094FA3",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2413.png"
+  },
+  {
+    "id": "cfbd:team:2415",
+    "name": "Morgan State",
+    "abbreviation": "MORG",
+    "color": "#014786",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2415.png"
+  },
+  {
+    "id": "cfbd:team:93",
+    "name": "Murray State",
+    "abbreviation": "MUR",
+    "color": "#002148",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/93.png"
+  },
+  {
+    "id": "cfbd:team:2426",
+    "name": "Navy",
+    "abbreviation": "NAVY",
+    "color": "#00225b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2426.png"
+  },
+  {
+    "id": "cfbd:team:152",
+    "name": "NC State",
+    "abbreviation": "NCSU",
+    "color": "#cc0000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/152.png"
+  },
+  {
+    "id": "cfbd:team:158",
+    "name": "Nebraska",
+    "abbreviation": "NEB",
+    "color": "#d00000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/158.png"
+  },
+  {
+    "id": "cfbd:team:2440",
+    "name": "Nevada",
+    "abbreviation": "NEV",
+    "color": "#041e42",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2440.png"
+  },
+  {
+    "id": "cfbd:team:160",
+    "name": "New Hampshire",
+    "abbreviation": "UNH",
+    "color": "#004990",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/160.png"
+  },
+  {
+    "id": "cfbd:team:2441",
+    "name": "New Haven",
+    "abbreviation": "NHVN",
+    "color": "#041e42",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2441.png"
+  },
+  {
+    "id": "cfbd:team:167",
+    "name": "New Mexico",
+    "abbreviation": "UNM",
+    "color": "#ba0c2f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/167.png"
+  },
+  {
+    "id": "cfbd:team:166",
+    "name": "New Mexico State",
+    "abbreviation": "NMSU",
+    "color": "#8c0b42",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/166.png"
+  },
+  {
+    "id": "cfbd:team:2447",
+    "name": "Nicholls",
+    "abbreviation": "NICH",
+    "color": "#C41230",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2447.png"
+  },
+  {
+    "id": "cfbd:team:2450",
+    "name": "Norfolk State",
+    "abbreviation": "NORF",
+    "color": "#0c8968",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2450.png"
+  },
+  {
+    "id": "cfbd:team:2453",
+    "name": "North Alabama",
+    "abbreviation": "UNA",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2453.png"
+  },
+  {
+    "id": "cfbd:team:153",
+    "name": "North Carolina",
+    "abbreviation": "UNC",
+    "color": "#7bafd4",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/153.png"
+  },
+  {
+    "id": "cfbd:team:2448",
+    "name": "North Carolina A&T",
+    "abbreviation": "NCAT",
+    "color": "#0505aa",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2448.png"
+  },
+  {
+    "id": "cfbd:team:2428",
+    "name": "North Carolina Central",
+    "abbreviation": "NCCU",
+    "color": "#880023",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2428.png"
+  },
+  {
+    "id": "cfbd:team:155",
+    "name": "North Dakota",
+    "abbreviation": "UND",
+    "color": "#00A26B",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/155.png"
+  },
+  {
+    "id": "cfbd:team:2449",
+    "name": "North Dakota State",
+    "abbreviation": "NDSU",
+    "color": "#00583d",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2449.png"
+  },
+  {
+    "id": "cfbd:team:2464",
+    "name": "Northern Arizona",
+    "abbreviation": "NAU",
+    "color": "#003976",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2464.png"
+  },
+  {
+    "id": "cfbd:team:2458",
+    "name": "Northern Colorado",
+    "abbreviation": "UNCO",
+    "color": "#13558D",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2458.png"
+  },
+  {
+    "id": "cfbd:team:2459",
+    "name": "Northern Illinois",
+    "abbreviation": "NIU",
+    "color": "#c8102e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2459.png"
+  },
+  {
+    "id": "cfbd:team:2460",
+    "name": "Northern Iowa",
+    "abbreviation": "UNI",
+    "color": "#473282",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2460.png"
+  },
+  {
+    "id": "cfbd:team:249",
+    "name": "North Texas",
+    "abbreviation": "UNT",
+    "color": "#00853e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/249.png"
+  },
+  {
+    "id": "cfbd:team:77",
+    "name": "Northwestern",
+    "abbreviation": "NU",
+    "color": "#582c83",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/77.png"
+  },
+  {
+    "id": "cfbd:team:2466",
+    "name": "Northwestern State",
+    "abbreviation": "NWST",
+    "color": "#492F91",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2466.png"
+  },
+  {
+    "id": "cfbd:team:87",
+    "name": "Notre Dame",
+    "abbreviation": "ND",
+    "color": "#0c2340",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/87.png"
+  },
+  {
+    "id": "cfbd:team:195",
+    "name": "Ohio",
+    "abbreviation": "OHIO",
+    "color": "#024230",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/195.png"
+  },
+  {
+    "id": "cfbd:team:194",
+    "name": "Ohio State",
+    "abbreviation": "OSU",
+    "color": "#ba0c2f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/194.png"
+  },
+  {
+    "id": "cfbd:team:201",
+    "name": "Oklahoma",
+    "abbreviation": "OU",
+    "color": "#841617",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/201.png"
+  },
+  {
+    "id": "cfbd:team:197",
+    "name": "Oklahoma State",
+    "abbreviation": "OKST",
+    "color": "#fe5c00",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/197.png"
+  },
+  {
+    "id": "cfbd:team:295",
+    "name": "Old Dominion",
+    "abbreviation": "ODU",
+    "color": "#043657",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/295.png"
+  },
+  {
+    "id": "cfbd:team:145",
+    "name": "Ole Miss",
+    "abbreviation": "MISS",
+    "color": "#13294b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/145.png"
+  },
+  {
+    "id": "cfbd:team:2483",
+    "name": "Oregon",
+    "abbreviation": "ORE",
+    "color": "#007030",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2483.png"
+  },
+  {
+    "id": "cfbd:team:204",
+    "name": "Oregon State",
+    "abbreviation": "ORST",
+    "color": "#dc4405",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/204.png"
+  },
+  {
+    "id": "cfbd:team:213",
+    "name": "Penn State",
+    "abbreviation": "PSU",
+    "color": "#001e44",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/213.png"
+  },
+  {
+    "id": "cfbd:team:219",
+    "name": "Pennsylvania",
+    "abbreviation": "PENN",
+    "color": "#082A74",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/219.png"
+  },
+  {
+    "id": "cfbd:team:221",
+    "name": "Pittsburgh",
+    "abbreviation": "PITT",
+    "color": "#003594",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/221.png"
+  },
+  {
+    "id": "cfbd:team:2502",
+    "name": "Portland State",
+    "abbreviation": "PRST",
+    "color": "#00311e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2502.png"
+  },
+  {
+    "id": "cfbd:team:2504",
+    "name": "Prairie View A&M",
+    "abbreviation": "PV",
+    "color": "#582c83",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2504.png"
+  },
+  {
+    "id": "cfbd:team:2506",
+    "name": "Presbyterian",
+    "abbreviation": "PRES",
+    "color": "#194896",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2506.png"
+  },
+  {
+    "id": "cfbd:team:163",
+    "name": "Princeton",
+    "abbreviation": "PRIN",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/163.png"
+  },
+  {
+    "id": "cfbd:team:2509",
+    "name": "Purdue",
+    "abbreviation": "PUR",
+    "color": "#ceb888",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2509.png"
+  },
+  {
+    "id": "cfbd:team:227",
+    "name": "Rhode Island",
+    "abbreviation": "URI",
+    "color": "#091f3f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/227.png"
+  },
+  {
+    "id": "cfbd:team:242",
+    "name": "Rice",
+    "abbreviation": "RICE",
+    "color": "#00205b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/242.png"
+  },
+  {
+    "id": "cfbd:team:257",
+    "name": "Richmond",
+    "abbreviation": "RICH",
+    "color": "#9e0712",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/257.png"
+  },
+  {
+    "id": "cfbd:team:2523",
+    "name": "Robert Morris",
+    "abbreviation": "RMU",
+    "color": "#00214D",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2523.png"
+  },
+  {
+    "id": "cfbd:team:164",
+    "name": "Rutgers",
+    "abbreviation": "RUTG",
+    "color": "#ce0e2d",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/164.png"
+  },
+  {
+    "id": "cfbd:team:16",
+    "name": "Sacramento State",
+    "abbreviation": "SAC",
+    "color": "#00573c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/16.png"
+  },
+  {
+    "id": "cfbd:team:2529",
+    "name": "Sacred Heart",
+    "abbreviation": "SHU",
+    "color": "#a40012",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2529.png"
+  },
+  {
+    "id": "cfbd:team:2535",
+    "name": "Samford",
+    "abbreviation": "SAM",
+    "color": "#005485",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2535.png"
+  },
+  {
+    "id": "cfbd:team:2534",
+    "name": "Sam Houston",
+    "abbreviation": "SHSU",
+    "color": "#f56423",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2534.png"
+  },
+  {
+    "id": "cfbd:team:301",
+    "name": "San Diego",
+    "abbreviation": "USD",
+    "color": "#2f99d4",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/301.png"
+  },
+  {
+    "id": "cfbd:team:21",
+    "name": "San Diego State",
+    "abbreviation": "SDSU",
+    "color": "#a6192e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/21.png"
+  },
+  {
+    "id": "cfbd:team:23",
+    "name": "San José State",
+    "abbreviation": "SJSU",
+    "color": "#0055a2",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/23.png"
+  },
+  {
+    "id": "cfbd:team:2545",
+    "name": "SE Louisiana",
+    "abbreviation": "SELA",
+    "color": "#215732",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2545.png"
+  },
+  {
+    "id": "cfbd:team:2567",
+    "name": "SMU",
+    "abbreviation": "SMU",
+    "color": "#d70000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2567.png"
+  },
+  {
+    "id": "cfbd:team:6",
+    "name": "South Alabama",
+    "abbreviation": "USA",
+    "color": "#00205b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/6.png"
+  },
+  {
+    "id": "cfbd:team:2579",
+    "name": "South Carolina",
+    "abbreviation": "SC",
+    "color": "#73000a",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2579.png"
+  },
+  {
+    "id": "cfbd:team:2569",
+    "name": "South Carolina State",
+    "abbreviation": "SCST",
+    "color": "#7d1315",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2569.png"
+  },
+  {
+    "id": "cfbd:team:233",
+    "name": "South Dakota",
+    "abbreviation": "SDAK",
+    "color": "#CD1241",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/233.png"
+  },
+  {
+    "id": "cfbd:team:2571",
+    "name": "South Dakota State",
+    "abbreviation": "SDST",
+    "color": "#0033a0",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2571.png"
+  },
+  {
+    "id": "cfbd:team:2546",
+    "name": "Southeast Missouri State",
+    "abbreviation": "SEMO",
+    "color": "#c8102e",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2546.png"
+  },
+  {
+    "id": "cfbd:team:2582",
+    "name": "Southern",
+    "abbreviation": "SOU",
+    "color": "#004B97",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2582.png"
+  },
+  {
+    "id": "cfbd:team:79",
+    "name": "Southern Illinois",
+    "abbreviation": "SIU",
+    "color": "#85283D",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/79.png"
+  },
+  {
+    "id": "cfbd:team:2572",
+    "name": "Southern Miss",
+    "abbreviation": "USM",
+    "color": "#ffc72c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2572.png"
+  },
+  {
+    "id": "cfbd:team:253",
+    "name": "Southern Utah",
+    "abbreviation": "SUU",
+    "color": "#c72026",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/253.png"
+  },
+  {
+    "id": "cfbd:team:58",
+    "name": "South Florida",
+    "abbreviation": "USF",
+    "color": "#006747",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/58.png"
+  },
+  {
+    "id": "cfbd:team:24",
+    "name": "Stanford",
+    "abbreviation": "STAN",
+    "color": "#8c1515",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/24.png"
+  },
+  {
+    "id": "cfbd:team:2617",
+    "name": "Stephen F. Austin",
+    "abbreviation": "SFA",
+    "color": "#393996",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2617.png"
+  },
+  {
+    "id": "cfbd:team:56",
+    "name": "Stetson",
+    "abbreviation": "STET",
+    "color": "#0a5640",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/56.png"
+  },
+  {
+    "id": "cfbd:team:284",
+    "name": "Stonehill",
+    "abbreviation": "STO",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/284.png"
+  },
+  {
+    "id": "cfbd:team:2619",
+    "name": "Stony Brook",
+    "abbreviation": "STBK",
+    "color": "#990000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2619.png"
+  },
+  {
+    "id": "cfbd:team:2900",
+    "name": "St. Thomas (MN)",
+    "abbreviation": "STMN",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2900.png"
+  },
+  {
+    "id": "cfbd:team:183",
+    "name": "Syracuse",
+    "abbreviation": "SYR",
+    "color": "#f76900",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/183.png"
+  },
+  {
+    "id": "cfbd:team:2627",
+    "name": "Tarleton State",
+    "abbreviation": "TAR",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2627.png"
+  },
+  {
+    "id": "cfbd:team:2628",
+    "name": "TCU",
+    "abbreviation": "TCU",
+    "color": "#4d1979",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2628.png"
+  },
+  {
+    "id": "cfbd:team:218",
+    "name": "Temple",
+    "abbreviation": "TEM",
+    "color": "#a41e35",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/218.png"
+  },
+  {
+    "id": "cfbd:team:2633",
+    "name": "Tennessee",
+    "abbreviation": "TENN",
+    "color": "#ff8200",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2633.png"
+  },
+  {
+    "id": "cfbd:team:2634",
+    "name": "Tennessee State",
+    "abbreviation": "TNST",
+    "color": "#171796",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2634.png"
+  },
+  {
+    "id": "cfbd:team:2635",
+    "name": "Tennessee Tech",
+    "abbreviation": "TNTC",
+    "color": "#5A4099",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2635.png"
+  },
+  {
+    "id": "cfbd:team:251",
+    "name": "Texas",
+    "abbreviation": "TEX",
+    "color": "#bf5700",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/251.png"
+  },
+  {
+    "id": "cfbd:team:245",
+    "name": "Texas A&M",
+    "abbreviation": "TA&M",
+    "color": "#500000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/245.png"
+  },
+  {
+    "id": "cfbd:team:2640",
+    "name": "Texas Southern",
+    "abbreviation": "TXSO",
+    "color": "#860038",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2640.png"
+  },
+  {
+    "id": "cfbd:team:326",
+    "name": "Texas State",
+    "abbreviation": "TXST",
+    "color": "#501214",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/326.png"
+  },
+  {
+    "id": "cfbd:team:2641",
+    "name": "Texas Tech",
+    "abbreviation": "TTU",
+    "color": "#c30020",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2641.png"
+  },
+  {
+    "id": "cfbd:team:2643",
+    "name": "The Citadel",
+    "abbreviation": "CIT",
+    "color": "#7badd3",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2643.png"
+  },
+  {
+    "id": "cfbd:team:2649",
+    "name": "Toledo",
+    "abbreviation": "TOL",
+    "color": "#0b2240",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2649.png"
+  },
+  {
+    "id": "cfbd:team:119",
+    "name": "Towson",
+    "abbreviation": "TOW",
+    "color": "#FFC229",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/119.png"
+  },
+  {
+    "id": "cfbd:team:2653",
+    "name": "Troy",
+    "abbreviation": "TROY",
+    "color": "#862633",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2653.png"
+  },
+  {
+    "id": "cfbd:team:2655",
+    "name": "Tulane",
+    "abbreviation": "TULN",
+    "color": "#006747",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2655.png"
+  },
+  {
+    "id": "cfbd:team:202",
+    "name": "Tulsa",
+    "abbreviation": "TLSA",
+    "color": "#003595",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/202.png"
+  },
+  {
+    "id": "cfbd:team:5",
+    "name": "UAB",
+    "abbreviation": "UAB",
+    "color": "#1a5632",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/5.png"
+  },
+  {
+    "id": "cfbd:team:399",
+    "name": "UAlbany",
+    "abbreviation": "UALB",
+    "color": "#3D2777",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/399.png"
+  },
+  {
+    "id": "cfbd:team:302",
+    "name": "UC Davis",
+    "abbreviation": "UCD",
+    "color": "#002855",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/302.png"
+  },
+  {
+    "id": "cfbd:team:2116",
+    "name": "UCF",
+    "abbreviation": "UCF",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2116.png"
+  },
+  {
+    "id": "cfbd:team:26",
+    "name": "UCLA",
+    "abbreviation": "UCLA",
+    "color": "#2774ae",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/26.png"
+  },
+  {
+    "id": "cfbd:team:41",
+    "name": "UConn",
+    "abbreviation": "CONN",
+    "color": "#000e2f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/41.png"
+  },
+  {
+    "id": "cfbd:team:2433",
+    "name": "UL Monroe",
+    "abbreviation": "ULM",
+    "color": "#840029",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2433.png"
+  },
+  {
+    "id": "cfbd:team:2439",
+    "name": "UNLV",
+    "abbreviation": "UNLV",
+    "color": "#cf0a2c",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2439.png"
+  },
+  {
+    "id": "cfbd:team:30",
+    "name": "USC",
+    "abbreviation": "USC",
+    "color": "#990000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/30.png"
+  },
+  {
+    "id": "cfbd:team:254",
+    "name": "Utah",
+    "abbreviation": "UTAH",
+    "color": "#be0000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/254.png"
+  },
+  {
+    "id": "cfbd:team:328",
+    "name": "Utah State",
+    "abbreviation": "USU",
+    "color": "#0f2439",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/328.png"
+  },
+  {
+    "id": "cfbd:team:3101",
+    "name": "Utah Tech",
+    "abbreviation": "UTU",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/3101.png"
+  },
+  {
+    "id": "cfbd:team:2638",
+    "name": "UTEP",
+    "abbreviation": "UTEP",
+    "color": "#ff8200",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2638.png"
+  },
+  {
+    "id": "cfbd:team:2630",
+    "name": "UT Martin",
+    "abbreviation": "UTM",
+    "color": "#FF6700",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2630.png"
+  },
+  {
+    "id": "cfbd:team:292",
+    "name": "UT Rio Grande Valley",
+    "abbreviation": "RGV",
+    "color": "#null",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/292.png"
+  },
+  {
+    "id": "cfbd:team:2636",
+    "name": "UTSA",
+    "abbreviation": "UTSA",
+    "color": "#0c2340",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2636.png"
+  },
+  {
+    "id": "cfbd:team:2674",
+    "name": "Valparaiso",
+    "abbreviation": "VAL",
+    "color": "#794500",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2674.png"
+  },
+  {
+    "id": "cfbd:team:238",
+    "name": "Vanderbilt",
+    "abbreviation": "VAN",
+    "color": "#000000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/238.png"
+  },
+  {
+    "id": "cfbd:team:222",
+    "name": "Villanova",
+    "abbreviation": "VILL",
+    "color": "#00205b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/222.png"
+  },
+  {
+    "id": "cfbd:team:258",
+    "name": "Virginia",
+    "abbreviation": "UVA",
+    "color": "#232d4b",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/258.png"
+  },
+  {
+    "id": "cfbd:team:259",
+    "name": "Virginia Tech",
+    "abbreviation": "VT",
+    "color": "#861f41",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/259.png"
+  },
+  {
+    "id": "cfbd:team:2678",
+    "name": "VMI",
+    "abbreviation": "VMI",
+    "color": "#ae122a",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2678.png"
+  },
+  {
+    "id": "cfbd:team:2681",
+    "name": "Wagner",
+    "abbreviation": "WAG",
+    "color": "#00483A",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2681.png"
+  },
+  {
+    "id": "cfbd:team:154",
+    "name": "Wake Forest",
+    "abbreviation": "WAKE",
+    "color": "#ceb888",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/154.png"
+  },
+  {
+    "id": "cfbd:team:264",
+    "name": "Washington",
+    "abbreviation": "WASH",
+    "color": "#33006f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/264.png"
+  },
+  {
+    "id": "cfbd:team:265",
+    "name": "Washington State",
+    "abbreviation": "WSU",
+    "color": "#a60f2d",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/265.png"
+  },
+  {
+    "id": "cfbd:team:2692",
+    "name": "Weber State",
+    "abbreviation": "WEB",
+    "color": "#18005a",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2692.png"
+  },
+  {
+    "id": "cfbd:team:2717",
+    "name": "Western Carolina",
+    "abbreviation": "WCU",
+    "color": "#492F91",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2717.png"
+  },
+  {
+    "id": "cfbd:team:2710",
+    "name": "Western Illinois",
+    "abbreviation": "WIU",
+    "color": "#4e1e8a",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2710.png"
+  },
+  {
+    "id": "cfbd:team:98",
+    "name": "Western Kentucky",
+    "abbreviation": "WKU",
+    "color": "#c60c30",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/98.png"
+  },
+  {
+    "id": "cfbd:team:2711",
+    "name": "Western Michigan",
+    "abbreviation": "WMU",
+    "color": "#532e1f",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2711.png"
+  },
+  {
+    "id": "cfbd:team:110242",
+    "name": "West Florida",
+    "abbreviation": "WFL",
+    "color": "#null",
+    "logo": ""
+  },
+  {
+    "id": "cfbd:team:2698",
+    "name": "West Georgia",
+    "abbreviation": "WGA",
+    "color": "#0033a1",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2698.png"
+  },
+  {
+    "id": "cfbd:team:277",
+    "name": "West Virginia",
+    "abbreviation": "WVU",
+    "color": "#eaaa00",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/277.png"
+  },
+  {
+    "id": "cfbd:team:2729",
+    "name": "William & Mary",
+    "abbreviation": "W&M",
+    "color": "#115740",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2729.png"
+  },
+  {
+    "id": "cfbd:team:275",
+    "name": "Wisconsin",
+    "abbreviation": "WIS",
+    "color": "#a00000",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/275.png"
+  },
+  {
+    "id": "cfbd:team:2747",
+    "name": "Wofford",
+    "abbreviation": "WOF",
+    "color": "#533B23",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2747.png"
+  },
+  {
+    "id": "cfbd:team:2751",
+    "name": "Wyoming",
+    "abbreviation": "WYO",
+    "color": "#492f24",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2751.png"
+  },
+  {
+    "id": "cfbd:team:43",
+    "name": "Yale",
+    "abbreviation": "YALE",
+    "color": "#004a81",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/43.png"
+  },
+  {
+    "id": "cfbd:team:2754",
+    "name": "Youngstown State",
+    "abbreviation": "YSU",
+    "color": "#E51936",
+    "logo": "https://cdn.collegefootballdata.com/logos/500/2754.png"
+  }
+]

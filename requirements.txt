@@ -1,0 +1,30 @@
+# Exact versions, not floors.
+#
+# This said PySide6>=6.6, which let the environment move under the project
+# without anything recording that it had. When an intermittent Qt crash
+# needed bisecting, the version it first appeared under turned out to be
+# unrecoverable - there was no history of what had ever been installed.
+# Pinning is what makes a dependency regression findable rather than a
+# mystery.
+#
+# Captured from the working environment on 2026-08-03:
+#   Python 3.12.10, PySide6 6.11.2, Qt 6.11.2
+#
+# To move a version deliberately: change it here, run the suite, and commit
+# the change together with the result.
+#
+# Note: this is the runtime set only. The tests additionally need the
+# research extra (numpy, opencv-python-headless) - six test modules import
+# them. CI installs `pip install -e ".[dev,research]"` from pyproject,
+# which is the authoritative list; this file mirrors the runtime half of
+# it for anyone who just wants to run the app.
+
+PySide6==6.11.2
+keyring==25.7.0; sys_platform == 'linux'
+PySide6-Essentials==6.11.2
+PySide6-Addons==6.11.2
+shiboken6==6.11.2
+
+pytest==9.1.1
+
+pyinstaller==6.21.0

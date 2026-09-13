@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">TapeSift application icon</title>
+  <desc id="desc">The green TapeSift Timeline T on a near-black rounded-square field.</desc>
+  <rect x="6" y="6" width="116" height="116" rx="27" fill="#0A0C0B"/>
+  <rect x="6.75" y="6.75" width="114.5" height="114.5" rx="26.25" fill="none" stroke="#29312D" stroke-width="1.5"/>
+  <g transform="translate(6.5 4.5) scale(1.15)">
+    <path fill="#39E07A" fill-rule="evenodd" clip-rule="evenodd" d="M 12 12
+H 88
+Q 90 12 90 14
+V 32
+Q 90 34 88 34
+H 59
+V 88
+Q 59 90 57 90
+H 43
+Q 41 90 41 88
+V 34
+H 12
+Q 10 34 10 32
+V 14
+Q 10 12 12 12
+Z
+
+M 46 12
+H 54
+V 43
+L 46 46
+Z"/>
+  </g>
+</svg>

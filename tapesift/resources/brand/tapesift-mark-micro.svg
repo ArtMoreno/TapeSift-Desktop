@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-labelledby="title desc">
+  <title id="title">TapeSift C1 Timeline T micro mark</title>
+  <desc id="desc">A bold geometric T with a centered playhead segmentation cut.</desc>
+  <path fill="#39E07A" fill-rule="evenodd" clip-rule="evenodd" d="M 10 14
+H 90
+V 38
+H 61
+V 90
+H 39
+V 38
+H 10
+Z
+
+M 45 14
+H 55
+V 48
+H 45
+Z"/>
+</svg>

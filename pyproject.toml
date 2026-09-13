@@ -1,0 +1,43 @@
+[project]
+name = "tapesift"
+version = "0.7.0-alpha"
+description = "Local desktop tool for turning long videos into clean, organized clips."
+requires-python = ">=3.12"
+# Exact, matching requirements.txt and the research extras below, which
+# were already pinned. A floor here let Qt move between runs with no
+# record of it, which is what made an intermittent crash impossible to
+# bisect - there was no way to learn which version it started under.
+dependencies = [
+    "PySide6==6.11.2",
+    "keyring==25.7.0; sys_platform == 'linux'",
+]
+
+[project.gui-scripts]
+tapesift = "tapesift.app_v3:run"
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.1.1",
+    "pyinstaller==6.21.0",
+]
+research = [
+    "numpy==2.5.1",
+    "opencv-python-headless==4.14.0.94",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tapesift/tests"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+include = ["tapesift*"]
+exclude = ["tapesift.tests*"]
+
+[tool.setuptools.package-data]
+tapesift = ["resources/**/*"]

@@ -1,0 +1,39 @@
+# Normalize line endings so checkouts are byte-consistent across machines.
+# The repository stores text as LF; without this, core.autocrlf=true on Windows
+# rewrites files to CRLF on checkout, which changed the on-disk bytes of the
+# detector source and broke a frozen-SHA test that hashes the file directly.
+
+* text=auto eol=lf
+
+# Python and text sources are always LF.
+*.py   text eol=lf
+*.pyi  text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.cfg  text eol=lf
+*.ini  text eol=lf
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+
+# Windows-only scripts keep CRLF.
+*.cmd  text eol=crlf
+*.bat  text eol=crlf
+*.ps1  text eol=crlf
+
+# Binary assets: never touch line endings, and skip diffs.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.ttf  binary
+*.otf  binary
+*.woff binary
+*.woff2 binary
+*.mp4  binary
+*.mov  binary
+*.exe  binary
+*.dll  binary

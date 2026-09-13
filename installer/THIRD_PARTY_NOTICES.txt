@@ -1,0 +1,100 @@
+TapeSift Third-Party Software Notices
+=====================================
+
+TapeSift is proprietary software created by Independent Football Intelligence. The following
+third-party software is distributed with TapeSift under its own terms.
+TapeSift does not claim ownership of these components.
+
+
+FFmpeg
+------
+
+TapeSift includes unmodified ffmpeg.exe and ffprobe.exe binaries from the
+FFmpeg project:
+
+    Version: n7.1.5-9-gb9a218bc1e-20260721
+    FFmpeg source revision: b9a218bc1eb0d5ebb56aa9dcd8e4525be495f7f7
+    License for this configured build: GNU LGPL version 3 or later
+
+The bundled configuration enables version 3 licensing and does not enable
+GPL or nonfree components. TapeSift starts FFmpeg as a separate process. It
+does not link FFmpeg into the TapeSift executable. Users may select compatible
+replacement FFmpeg and FFprobe executables in TapeSift Settings.
+
+The complete license text is installed at:
+
+    _internal\ffmpeg\LICENSE.txt
+
+The exact version and build configuration are installed at:
+
+    FFMPEG_BUILD_INFO.txt
+
+The corresponding FFmpeg source archive is installed at:
+
+    _internal\ffmpeg\FFmpeg-source-b9a218bc1e.zip
+
+Corresponding source and build information:
+
+    FFmpeg source revision:
+    https://github.com/FFmpeg/FFmpeg/tree/b9a218bc1eb0d5ebb56aa9dcd8e4525be495f7f7
+
+    FFmpeg source downloads:
+    https://ffmpeg.org/download.html
+
+    BtbN FFmpeg build scripts:
+    https://github.com/BtbN/FFmpeg-Builds
+
+FFmpeg project:
+
+    https://ffmpeg.org/
+
+
+Qt and PySide6
+--------------
+
+TapeSift uses Qt and PySide6 6.11.2 under the GNU Lesser General Public
+License version 3. TapeSift uses the unmodified dynamically linked libraries
+included with the official PySide6 distribution.
+
+    https://www.qt.io/licensing/
+    https://doc.qt.io/qtforpython-6/licenses.html
+
+
+Rajdhani
+--------
+
+TapeSift includes the Rajdhani typeface under the SIL Open Font License 1.1.
+The complete license is installed with the font resources as:
+
+    _internal\tapesift\resources\fonts\OFL-Rajdhani.txt
+
+
+IBM Plex
+--------
+
+TapeSift includes IBM Plex Sans and IBM Plex Mono. Copyright 2017 IBM Corp.
+IBM Plex is distributed under the SIL Open Font License 1.1 with the
+Reserved Font Name "Plex". The complete license is installed as:
+
+    _internal\tapesift\resources\fonts\OFL-IBMPlex.txt
+
+    https://github.com/IBM/plex
+
+
+Fluent System Icons
+-------------------
+
+TapeSift includes selected Fluent System Icons from Microsoft under the MIT
+license declared by the official SVG icon package:
+
+    https://github.com/microsoft/fluentui-system-icons
+    https://github.com/microsoft/fluentui-system-icons/tree/main/packages/svg-icons
+
+
+Python
+------
+
+TapeSift includes the Python runtime under the Python Software Foundation
+License.
+
+    https://docs.python.org/3/license.html

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30" fill="none">
+  <defs><radialGradient id="plate" cx="34%" cy="28%" r="76%"><stop offset="0" stop-color="#343638"/><stop offset=".62" stop-color="#222426"/><stop offset="1" stop-color="#0a0c0d"/></radialGradient></defs>
+  <circle cx="15" cy="15" r="13.3" fill="#080a0b" stroke="#3a3d3f"/><circle cx="15" cy="15" r="11.6" fill="url(#plate)" stroke="#111314"/>
+  <path d="M15 2.2v2.7M27.8 15h-2.7M15 27.8v-2.7M2.2 15h2.7" stroke="#9a9d9f" stroke-width="1.05" stroke-linecap="square"/>
+  <path d="M8.2 10.2h2.1v9.6H8.2zM21.3 9.8 12.1 15l9.2 5.2z" fill="currentColor"/>
+</svg>

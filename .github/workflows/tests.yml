@@ -1,0 +1,41 @@
+name: Desktop checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  desktop:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Linux runtime libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg libegl1 libopengl0 libxkbcommon-x11-0 libxcb-cursor0 libpulse0 libasound2t64 xvfb
+      - run: python -m pip install -e ".[dev,research]"
+      - name: Windows FFmpeg
+        if: runner.os == 'Windows'
+        run: python scripts/fetch_ffmpeg.py
+      - name: Linux desktop smoke
+        if: runner.os == 'Linux'
+        run: xvfb-run -a python scripts/smoke_desktop.py --output .artifacts/smoke
+      - name: Windows desktop smoke
+        if: runner.os == 'Windows'
+        run: python scripts/smoke_desktop.py --output .artifacts/smoke
+      - name: Complete test suite
+        if: ${{ !cancelled() }}
+        run: python scripts/run_tests.py --output .artifacts/tests --jobs 2
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: results-${{ matrix.os }}
+          path: .artifacts/

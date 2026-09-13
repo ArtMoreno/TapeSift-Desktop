@@ -1,0 +1,41 @@
+TapeSift, End User Licence
+============================
+
+TapeSift is created by Independent Football Intelligence.
+Copyright (c) 2026 Independent Football Intelligence. All rights reserved.
+
+This software is provided to you under the terms agreed at purchase. You
+may install and use it on computers you own or control. You may not
+redistribute, resell, or publish the software itself.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+
+
+Included third-party software
+-----------------------------
+
+FFmpeg
+    TapeSift includes unmodified binaries of FFmpeg (ffmpeg.exe,
+    ffprobe.exe), an LGPL version 3-or-later build, which TapeSift runs as
+    separate programs. TapeSift does not own FFmpeg. The full licence text
+    is installed alongside the binaries in the ffmpeg folder. Exact build
+    information and corresponding source links are provided in
+    THIRD_PARTY_NOTICES.txt and FFMPEG_BUILD_INFO.txt.
+
+Qt / PySide6
+    Used under the GNU Lesser General Public Licence version 3.
+    https://www.qt.io/licensing/
+
+Python
+    Used under the Python Software Foundation Licence.
+    https://docs.python.org/3/license.html
+
+NOTE: this text is a starting point, not legal advice. Have a lawyer
+review the end-user terms and the third-party attributions before selling
+this software.
