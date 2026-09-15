@@ -166,6 +166,29 @@ def _copy_exclusive(source: Path, destination: Path) -> None:
         raise
 
 
+def save_project_copy(local_db: Path | str, folder: Path | str) -> Path:
+    """Write a standalone copy of committed data without replacing another file."""
+    source, destination = Path(local_db).resolve(), Path(folder).resolve()
+    if not source.is_file() or not destination.is_dir():
+        raise SyncError("The project or destination folder is unavailable.")
+    with tempfile.TemporaryDirectory(prefix=".tapesift-copy-", dir=destination) as temporary:
+        snapshot = Path(temporary) / "copy.tapesift"
+        _snapshot(source, snapshot)
+        _validate_database(snapshot)
+        number = 1
+        while True:
+            suffix = "" if number == 1 else f" ({number})"
+            target = destination / f"{source.stem}{suffix}.tapesift"
+            number += 1
+            if any(Path(str(target) + extension).exists() for extension in ("-wal", "-shm", "-journal")):
+                continue
+            try:
+                _copy_exclusive(snapshot, target)
+            except FileExistsError:
+                continue
+            return target
+
+
 class SyncStore:
     @_io_errors
     def __init__(self, shared_folder: Path | str):

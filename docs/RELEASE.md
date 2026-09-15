@@ -32,6 +32,8 @@ After the runtime-only checks, both clean environments installed the declared de
 
 ## Regression results and open work
 
+**File → Save Project → Save to Folder…** now saves pending valid Clip Details edits and writes a standalone `.tapesift` copy into a chosen folder. Existing files are preserved with numbered copy names, the original project remains open, and the success dialog offers **Open Folder**. The source video remains separate. Five focused copy/menu tests passed on each of Windows and Linux; a native Windows dialog check also saved and reopened the copy successfully.
+
 The personal-sync update adds **File → Shared Projects** for one editor switching computers through a chosen synced folder. It publishes complete, immutable database snapshots, opens verified local copies, preserves overlapping versions, and restores known local film paths. [Setup and transfer limits](SHARED_PROJECTS.md) explain the drive-client handoff and external footage.
 
 Its focused checks passed: 37 tests on Windows with one symlink-permission skip, and all 38 on Linux. Existing Windows settings-write, snap-correction, and lazy V3 startup regressions also passed (16 tests). Native Windows and Linux XCB runs exercised the actual dialog with generated film, saved notes and confirmed snap marks, automatic publication, refusing an outdated save while retaining local work, playback, reopening, and a six-second export. A separate Windows → Linux → Windows snapshot round trip retained the edited note and 2466 ms snap and restored the known Windows film and export paths. Existing snapshot hashes stayed unchanged. Independent review found no remaining actionable blockers in the changed paths.

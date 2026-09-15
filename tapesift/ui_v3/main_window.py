@@ -11,10 +11,10 @@ from types import MethodType
 
 import shiboken6
 
-from PySide6.QtCore import QBuffer, QByteArray, QEvent, QIODevice, QPoint, QRect, QSize, QTimer, Qt
-from PySide6.QtGui import QAction, QColor, QIcon, QKeySequence, QShortcut, QTransform
+from PySide6.QtCore import QBuffer, QByteArray, QEvent, QIODevice, QPoint, QRect, QSize, QTimer, Qt, QUrl
+from PySide6.QtGui import QAction, QColor, QDesktopServices, QIcon, QKeySequence, QShortcut, QTransform
 from PySide6.QtWidgets import (
-    QApplication, QDockWidget, QFrame, QGridLayout, QHBoxLayout, QHeaderView, QLabel, QMainWindow, QMenu,
+    QApplication, QDockWidget, QFileDialog, QFrame, QGridLayout, QHBoxLayout, QHeaderView, QLabel, QMainWindow, QMenu,
     QMessageBox, QPushButton, QToolButton, QSizePolicy, QStyle, QVBoxLayout, QWidget,
 )
 
@@ -24,6 +24,7 @@ from tapesift.models.export_package import ExportStyle
 from tapesift.services import export_service, recovery_service, result_service, detail_service, drive_suggestions
 from tapesift.services.autodetect_capture_service import DETECTOR_VERSION
 from tapesift.services.project_service import ProjectSession
+from tapesift.services.project_sync_service import save_project_copy
 from tapesift.ui_v2.main_window import MainWindowV2
 from tapesift.ui_core.clip_list import (
     COL_NUM, COL_START, COL_STATUS, COL_TITLE, REVIEW_KIND_ROLE,
@@ -2736,6 +2737,32 @@ class MainWindowV3(MainWindowV2):
             shortcut.setKey(QKeySequence())
             shortcut.deleteLater()
 
+    def _save_project_to_folder(self) -> None:
+        if self.session is None or self.session.read_only:
+            return
+        folder = QFileDialog.getExistingDirectory(
+            self, "Save Project to Folder", str(self.session.db_path.parent))
+        if not folder:
+            return
+        try:
+            if not self.shared_projects.save_draft():
+                QMessageBox.warning(self, "Could not save project", "Save or correct the pending clip details, then try again.")
+                return
+            saved = save_project_copy(self.session.db_path, folder)
+        except (TapeSiftError, OSError, sqlite3.Error) as exc:
+            QMessageBox.warning(self, "Could not save project copy", str(exc))
+            return
+        self.statusBar().showMessage(f"Project copy saved: {saved}", 8000)
+        notice = QMessageBox(self)
+        notice.setWindowTitle("Project copy saved")
+        notice.setText(f"Saved a portable project copy:\n{saved}")
+        notice.setInformativeText("Your original project remains open. The source video is separate; copy it too if needed.")
+        open_folder = notice.addButton("Open Folder", QMessageBox.ButtonRole.ActionRole)
+        notice.addButton(QMessageBox.StandardButton.Ok)
+        notice.exec()
+        if notice.clickedButton() is open_folder:
+            QDesktopServices.openUrl(QUrl.fromLocalFile(str(saved.parent)))
+
     def _tidy_v3_menus(self) -> None:
         menus = {self._action_text(a): a.menu() for a in self.menuBar().actions() if a.menu()}
         file_menu, playback = menus["File"], menus["Playback"]
@@ -2751,6 +2778,15 @@ class MainWindowV3(MainWindowV2):
             self._action_text(a): a
             for menu in menus.values() for a in menu.actions() if not a.isSeparator()
         }
+        save_action = self._v3_menu_actions["Save Project"]
+        self._v3_save_menu = QMenu("Save Project", self)
+        file_menu.insertMenu(save_action, self._v3_save_menu)
+        file_menu.removeAction(save_action)
+        self._v3_save_menu.addAction(save_action)
+        self.save_to_folder_action = self._v3_save_menu.addAction("Save to Folder…")
+        self.save_to_folder_action.setShortcut(QKeySequence("Ctrl+Shift+S"))
+        self.save_to_folder_action.triggered.connect(self._save_project_to_folder)
+        self._v3_save_menu.aboutToShow.connect(self._sync_v3_menu_availability)
         diagnostics = QMenu("Detection diagnostics", self)
         for menu in (file_menu, playback):
             for action in list(menu.actions()):
@@ -2787,6 +2823,8 @@ class MainWindowV3(MainWindowV2):
             return
         session = self.session
         editing = bool(session and not session.read_only)
+        self._v3_save_menu.setEnabled(editing)
+        self.save_to_folder_action.setEnabled(editing)
         active = self.stack.currentWidget() is self.workspace
         for name in ("Save Project", "Rename Project", "Project Settings",
                      "Sort Clips by Start Time", "Find Duplicate Clips"):

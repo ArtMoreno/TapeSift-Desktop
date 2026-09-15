@@ -13,6 +13,7 @@ Football film review, clip editing, and searchable play breakdowns for Windows a
 ## Work with film
 
 - Open game film, mark clips manually, or review suggested play boundaries.
+- Use **File → Save Project → Save to Folder…** (`Ctrl+Shift+S`) to write a portable `.tapesift` copy to a folder you choose. **Open Folder** shows the saved file; transfer the original video separately when moving computers.
 - Use J/K/L transport, pause and resume, and inspect individual frames.
 - Log down and distance together, enter yardage beside Gain, and add players and notes in compact Clip Details.
 - Enable the optional Play timer, confirm or mark the snap, and mark release for time to throw. Measurements follow film time and save with the clip; predicted snaps remain estimates until confirmed.
