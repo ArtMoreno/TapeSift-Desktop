@@ -12,7 +12,7 @@ from PySide6.QtWidgets import (
     QApplication, QAbstractButton, QAbstractSpinBox,
     QComboBox, QDialog, QDialogButtonBox, QFormLayout, QFrame, QGridLayout, QHBoxLayout,
     QLabel, QLineEdit, QMenu, QMessageBox, QPushButton, QSizePolicy, QToolButton,
-    QVBoxLayout, QWidget,
+    QVBoxLayout, QWidget, QWidgetAction,
 )
 
 from tapesift.services.football_context import (
@@ -25,6 +25,7 @@ from tapesift.ui_core.clip_editor import ClipEditor, STANDARD_RESULT_CHOICES
 from tapesift.ui_core.tag_edit import DetailEdit, TagLineEdit
 from tapesift.ui_core.flow_layout import FlowLayout
 from tapesift.ui_v3.source_photo import SourcePhotoPanel
+from tapesift.ui_v3.play_timing import PlayTimingPanel
 from tapesift.ui_v3.icons import tinted_icon, brand_pixmap
 from tapesift.ui.result_manager_dialog import unique_results
 from tapesift.ui_v3.result_picker import (
@@ -519,6 +520,7 @@ class ClipDetailsV3(ClipEditor):
         self._field_dialog = None
         self.context_panel = None
         self.source_photo_panel = None
+        self.play_timing = None
         self._pagebook_ready = False
         super().__init__(*args, **kwargs)
 
@@ -660,6 +662,8 @@ class ClipDetailsV3(ClipEditor):
         self.quarterback_scope.setToolTip("On Save: this clip only, or fill future unlogged clips from this point until the next substitution. Saved assignments stay unchanged.")
         self.quarterback_scope.currentIndexChanged.connect(self._mark_unsaved)
         self.qb_scope_row = self._quick_row("Apply QB to", self.quarterback_scope)
+        self.play_timing = PlayTimingPanel()
+        self.play_timing.details_changed.connect(self._stage_timing_details)
         self.quarter_buttons = {}
         quarters = QWidget()
         quarter_layout = QHBoxLayout(quarters)
@@ -670,10 +674,8 @@ class ClipDetailsV3(ClipEditor):
             button.clicked.connect(lambda _checked=False, v=value: self.detail_edits["quarter"].setText(v))
             quarter_layout.addWidget(button, 1)
             self.quarter_buttons[value] = button
-        quarter_row_frame = self._quick_row("Quarter", quarters)
         self.carry_hint = label("")
         self.carry_hint.setStyleSheet("color:#8d949a; font-size:10px; padding:2px 0;")
-        self._quick_layout.addWidget(self.carry_hint)
         down_row = QWidget()
         down_layout = QHBoxLayout(down_row)
         down_layout.setContentsMargins(0, 0, 0, 0)
@@ -681,47 +683,61 @@ class ClipDetailsV3(ClipEditor):
         self.down_buttons = {}
         for value, caption in (("1", "1st"), ("2", "2nd"), ("3", "3rd"), ("4", "4th")):
             button = self._choice_button(caption, "Down " + caption)
+            button.setFixedHeight(30)
             button.clicked.connect(lambda _checked=False, v=value: choose(self.context_panel.down_combo, v))
             # choose blocks signals; route clicks through the existing canonical down writer.
             button.clicked.connect(self.context_panel._change_down)
             down_layout.addWidget(button, 1)
             self.down_buttons[value] = button
-        down_row_frame = self._quick_row("Down", down_row)
-        self._pair_quick_rows(quarter_row_frame, down_row_frame)
         self.quick_ball = combo((("Not set", ""),), "Ball on")
         self.quick_ball.activated.connect(self._quick_ball_picked)
         distance_controls = QWidget()
-        distance_layout = QVBoxLayout(distance_controls)
-        distance_layout.setContentsMargins(0, 0, 0, 0)
-        distance_layout.setSpacing(4)
-        distance_picks = QGridLayout()
+        distance_picks = QGridLayout(distance_controls)
+        distance_picks.setContentsMargins(0, 0, 0, 0)
         distance_picks.setSpacing(3)
+        self._distance_picks = distance_picks
         self.distance_buttons = {}
         for yards in range(1, 11):
             button = self._choice_button(str(yards), f"Distance {yards} yards")
-            button.setFixedHeight(24)
+            button.setFixedHeight(26)
+            button.setStyleSheet("QPushButton {min-height:26px;max-height:26px;padding:0;font:11px 'IBM Plex Sans';}")
             button.clicked.connect(lambda _checked=False, value=yards: self.context_panel.distance_edit.setText(str(value)))
             distance_picks.addWidget(button, (yards - 1) // 5, (yards - 1) % 5)
             self.distance_buttons[yards] = button
-        distance_layout.addLayout(distance_picks)
-        distance_layout.addWidget(self.context_panel.distance_edit)
-        situation = QFrame()
-        situation.setProperty("quickRow", "true")
-        situation_layout = QGridLayout(situation)
-        situation_layout.setContentsMargins(10, 10, 10, 12)
+        self.situation_panel = QFrame()
+        self.situation_panel.setProperty("gradingGroup", "true")
+        situation_layout = QGridLayout(self.situation_panel)
+        self._situation_layout = situation_layout
+        self._situation_fields = []
+        situation_layout.setContentsMargins(0, 6, 0, 8)
         situation_layout.setHorizontalSpacing(8)
-        situation_layout.setVerticalSpacing(4)
-        for column, (caption, control) in enumerate((("Distance", distance_controls),
-                                                     ("Ball on", self.quick_ball))):
+        situation_layout.setVerticalSpacing(6)
+        for row, column, caption, control in ((0, 0, "Quarter", quarters),
+                (0, 1, "Ball on", self.quick_ball), (2, 0, "Down", down_row),
+                (2, 1, "Distance", self.context_panel.distance_edit)):
             title = label(caption)
             title.setBuddy(control)
             control.setMinimumWidth(0)
             control.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
-            situation_layout.addWidget(title, 0, column)
-            situation_layout.addWidget(control, 1, column, Qt.AlignmentFlag.AlignTop)
-            situation_layout.setColumnStretch(column, 1)
+            control.setFixedHeight(30)
+            situation_layout.addWidget(title, row, column)
+            situation_layout.addWidget(control, row + 1, column)
+            self._situation_fields.append((title, control))
             control.show()
-        self._quick_layout.addWidget(situation)
+        situation_layout.setColumnStretch(0, 3)
+        situation_layout.setColumnStretch(1, 2)
+        distance_heading = label("Quick distance")
+        distance_heading.setStyleSheet("color:#a1aab4;font-size:11px;")
+        self.distance_strip = QWidget()
+        distance_strip_layout = QHBoxLayout(self.distance_strip)
+        distance_strip_layout.setContentsMargins(0, 0, 0, 0)
+        distance_strip_layout.setSpacing(6)
+        distance_strip_layout.addWidget(distance_heading)
+        distance_strip_layout.addWidget(distance_controls, 1)
+        self._distance_heading = distance_heading
+        situation_layout.addWidget(self.distance_strip, 4, 0, 1, 2)
+        self._quick_layout.addWidget(self.situation_panel)
+        self._quick_layout.addWidget(self.carry_hint)
         self.previous_gain_hint = label("")
         self.previous_gain_hint.setStyleSheet("color:#8d949a; font-size:11px; padding:4px 0;")
         self._quick_layout.addWidget(self.previous_gain_hint)
@@ -785,7 +801,16 @@ class ClipDetailsV3(ClipEditor):
         play_layout.setColumnStretch(0, 1)
         play_layout.setColumnStretch(1, 1)
         self._quick_layout.addWidget(play_row)
+        self.players_panel = QFrame()
+        self.players_panel.setProperty("gradingGroup", "true")
+        players_layout = QVBoxLayout(self.players_panel)
+        players_layout.setContentsMargins(0, 10, 0, 12)
+        players_layout.setSpacing(8)
         primary_row = self._quick_row("Primary player", self.detail_edits["player_name"])
+        self._quick_layout.removeWidget(primary_row)
+        primary_row.layout().setContentsMargins(0, 0, 0, 0)
+        players_layout.addWidget(primary_row)
+        self.detail_edits["player_name"].setFixedHeight(32)
         self.detail_edits["player_name"].lineEdit().setPlaceholderText("Name or number…")
         secondary = QWidget()
         secondary_layout = QVBoxLayout(secondary)
@@ -796,16 +821,25 @@ class ClipDetailsV3(ClipEditor):
         self.secondary_entry.setAccessibleName("Secondary players, comma separated")
         self.secondary_entry.textChanged.connect(self.detail_edits["other_players"].setText)
         self.secondary_entry.returnPressed.connect(self._apply_from_key)
-        secondary_layout.addWidget(self.secondary_entry)
+        self.secondary_entry.hide()
         self.secondary_chips = QWidget()
         self._secondary_flow = FlowLayout(self.secondary_chips, spacing=4)
         secondary_layout.addWidget(self.secondary_chips)
+        self.add_secondary_button = QToolButton()
+        self.add_secondary_button.setText("+ Add player")
+        self.add_secondary_button.setProperty("quickResult", "true")
+        self.add_secondary_button.setAccessibleName("Add or edit secondary players")
+        self.add_secondary_button.clicked.connect(self._edit_secondary_players)
+        secondary_layout.addWidget(self.secondary_entry)
         secondary_row = self._quick_row("Secondary players", secondary)
-        self._pair_quick_rows(primary_row, secondary_row)
+        self._quick_layout.removeWidget(secondary_row)
+        secondary_row.layout().setContentsMargins(0, 0, 0, 0)
+        players_layout.addWidget(secondary_row)
+        self._quick_layout.addWidget(self.players_panel)
         self.quick_results = QWidget()
         self.quick_results.setObjectName("V3QuickResults")
         results_layout = QVBoxLayout(self.quick_results)
-        results_layout.setContentsMargins(10, 10, 10, 12)
+        results_layout.setContentsMargins(0, 10, 0, 12)
         results_layout.setSpacing(8)
         result_heading = QHBoxLayout()
         result_title = label("Result")
@@ -813,11 +847,14 @@ class ClipDetailsV3(ClipEditor):
         result_heading.addWidget(result_title)
         result_heading.addStretch()
         self.quick_result_more = QToolButton()
-        self.quick_result_more.setText("All results ▾")
+        self.quick_result_more.setText("All results")
+        self.quick_result_more.setIcon(tinted_icon("chevron-down-16.svg", "#bdc8d2", 12))
+        self.quick_result_more.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        self.quick_result_more.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
         self.quick_result_more.setAccessibleName("Search all results")
         self.quick_result_more.setToolTip("Search, select, or add a result")
         self.quick_result_more.setFixedHeight(30)
-        self.quick_result_more.setStyleSheet("QToolButton { background:transparent; color:#e6e8e6; border:1px solid #262a2f; border-radius:3px; padding:4px 9px; } QToolButton:hover { background:#1c1f23; border-color:#3a4046; } QToolButton:focus { border-color:#ffc27b; } QToolButton:pressed { background:#0a0b0c; } QToolButton:disabled { color:#8d949a; border-color:#262a2f; }")
+        self.quick_result_more.setStyleSheet("QToolButton { background:transparent; color:#e6e8e6; border:1px solid #262a2f; border-radius:3px; padding:4px 7px; font:12px 'IBM Plex Sans'; } QToolButton:hover { background:#1c1f23; border-color:#3a4046; } QToolButton:focus { border-color:#ffc27b; } QToolButton:pressed { background:#0a0b0c; } QToolButton:disabled { color:#8d949a; border-color:#262a2f; }")
         self.quick_result_more.clicked.connect(self._show_results_picker)
         result_heading.addWidget(self.quick_result_more)
         self.quick_result_edit = QPushButton("Edit")
@@ -834,75 +871,98 @@ class ClipDetailsV3(ClipEditor):
         self.quick_result_buttons = {}
         self._v3_shortcuts = self.settings.v3_result_favorites if self.settings else None
         self._v3_custom_results = []
-        self._rebuild_quick_result_buttons()
         results_layout.addLayout(self._quick_favorites_grid)
         self.yardage_panel = QWidget()
         yardage_outer = QVBoxLayout(self.yardage_panel)
-        yardage_outer.setContentsMargins(0, 6, 0, 5)
-        yardage_outer.setSpacing(5)
-        yardage_outer.addWidget(label("Yardage"))
-        columns = QHBoxLayout()
-        columns.setSpacing(8)
+        yardage_outer.setContentsMargins(0, 0, 0, 0)
+        yardage_outer.setSpacing(6)
         self.quick_gain_buttons = {}
-        for key, title, palette in (("yards", "GAIN", "sand"), ("yac", "YAC · after catch", "cool")):
+        for key, title, palette in (("yards", "Gain", "neutral"), ("yac", "YAC", "cool")):
             well = QFrame()
             well.setObjectName("V3GainPanel" if key == "yards" else "V3YacPanel")
-            layout = QVBoxLayout(well)
-            layout.setContentsMargins(7, 6, 7, 6)
-            layout.setSpacing(4)
-            layout.addWidget(label(title))
+            well.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+            layout = QHBoxLayout(well)
+            layout.setContentsMargins(3, 3, 3, 3)
+            layout.setSpacing(2)
+            caption = label(title)
+            layout.addWidget(caption)
+            edit = self.detail_edits[key]
+            edit.set_integer_mode(True)
+            edit.setFixedWidth(26 if key == "yards" else 44)
+            edit.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+            edit.setFixedHeight(28)
+            edit.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
+            edit.lineEdit().setPlaceholderText("—")
+            edit.setAccessibleName("Total gain in yards" if key == "yards" else "Yards after catch")
+            edit.setToolTip("Enter yards; blank means not measured. Use yd ▾ for quick adjustments.")
+            edit.setStyleSheet("QComboBox {background:#101719;border:1px solid #38444b;padding:0;min-height:24px;max-height:24px;font-size:13px;font-weight:600;} QComboBox:focus {border-color:#ffc27b;} QComboBox::drop-down {width:0;border:0;} QComboBox::down-arrow {image:none;}")
+            edit.lineEdit().setStyleSheet("background:transparent;border:0;color:#e6e8e6;font-size:13px;font-weight:600;padding:0;")
+            units = QToolButton()
+            units.setText("yd")
+            units.setFixedWidth(18 if key == "yards" else 22)
+            units.setAccessibleName("Gain presets" if key == "yards" else "YAC adjustments")
+            units.setToolTip("Gain presets: 5, 10, 20 yards" if key == "yards" else "Adjust yards after catch")
+            units.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+            units.setStyleSheet("QToolButton {background:transparent;border:0;padding:0 4px 0 0;color:#c3ccd4;font:11px 'IBM Plex Sans';} QToolButton:focus {border:1px solid #ffc27b;} QToolButton::menu-indicator {width:4px;}")
+            menu = QMenu(units)
+            units.setMenu(menu)
+            adjustment_panel = QWidget()
+            adjustments = QVBoxLayout(adjustment_panel)
+            adjustments.setContentsMargins(8, 8, 8, 8)
             presets = QHBoxLayout()
             if key == "yards":
                 for yards in (5, 10, 20):
                     button = self._choice_button(str(yards), f"Set gain to {yards} yards")
                     button.setCheckable(False)
-                    button.setFixedHeight(23)
+                    button.setFixedSize(38, 28)
+                    button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
                     tint_button(button, "sand")
                     button.clicked.connect(lambda _=False, y=yards: self.detail_edits["yards"].setText(str(y)))
+                    button.clicked.connect(menu.close)
                     self.quick_gain_buttons[yards] = button
                     presets.addWidget(button, 1)
-            else:
-                hint = label("Measured after reception")
-                hint.setStyleSheet("font-size:10px;color:#8d949a;")
-                hint.setFixedHeight(23)
-                presets.addWidget(hint)
-            layout.addLayout(presets)
-            edit = self.detail_edits[key]
-            edit.set_integer_mode(True)
-            edit.setMinimumWidth(0)
-            edit.setMaximumWidth(16777215)
-            edit.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
-            edit.setFixedHeight(44)
-            edit.lineEdit().setAlignment(Qt.AlignmentFlag.AlignCenter)
-            edit.lineEdit().setPlaceholderText("—")
-            edit.setAccessibleName("Total gain in yards" if key == "yards" else "Yards after catch")
-            edit.setToolTip("Click to enter yards. Blank means not measured; minus/plus adjust one yard.")
-            edit.setStyleSheet("QComboBox {background:#0d0e10;border:1px solid #262a2f;padding:2px;min-height:38px;max-height:38px;font-size:24px;font-weight:600;} QComboBox:hover {border-color:#3a4046;} QComboBox:focus {border-color:#ffc27b;} QComboBox:disabled {color:#8d949a;border-color:#262a2f;} QComboBox::drop-down {width:0;border:0;} QComboBox::down-arrow {image:none;}")
-            edit.lineEdit().setStyleSheet("background:transparent;border:0;color:#e6e8e6;font-size:24px;font-weight:600;padding:0;")
-            layout.addWidget(edit)
-            steps = QHBoxLayout()
-            steps.setSpacing(0)
+            adjustments.addLayout(presets)
             buttons = []
             for caption, delta in (("−", -1), ("+", 1)):
                 button = self._choice_button(caption, f"{'Increase' if delta > 0 else 'Decrease'} {'gain' if key == 'yards' else 'YAC'} by one yard")
                 button.setCheckable(False)
+                button.setFixedSize(22, 28)
+                button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
                 tint_button(button, palette)
+                button.setStyleSheet(button.styleSheet() + "QPushButton {min-width:22px;max-width:22px;min-height:26px;max-height:26px;padding:0;}")
                 button.clicked.connect(lambda _=False, k=key, d=delta: self._adjust_yardage(k, d))
-                steps.addWidget(button, 1)
                 buttons.append(button)
-            layout.addLayout(steps)
+            if key == "yards":
+                layout.addWidget(buttons[0])
+            else:
+                for button in buttons:
+                    presets.addWidget(button)
+            layout.addWidget(edit, 1)
+            layout.addWidget(units)
+            if key == "yards":
+                layout.addWidget(buttons[1])
+            else:
+                layout.addWidget(label("after catch"))
+                layout.addStretch(1)
             status = label("Not entered" if key == "yards" else "Enter when known")
             status.setStyleSheet("font-size:10px;color:#8d949a;")
-            layout.addWidget(status)
-            well.setStyleSheet("QFrame {background:#111214;border:1px solid #262a2f;border-radius:3px;} QLabel {border:0;background:transparent;}")
-            columns.addWidget(well, 1)
+            adjustments.addWidget(status)
+            action = QWidgetAction(menu)
+            action.setDefaultWidget(adjustment_panel)
+            menu.addAction(action)
+            yardage_outer.addWidget(well)
             if key == "yards":
                 self.gain_panel, self.gain_status = well, status
                 self.gain_decrease_btn, self.gain_increase_btn = buttons
+                self.gain_units_button = units
+                self.gain_caption = layout.itemAt(0).widget()
+                well.setFixedHeight(36)
             else:
                 self.yac_panel, self.yac_status = well, status
                 self.yac_decrease_btn, self.yac_increase_btn = buttons
-        yardage_outer.addLayout(columns)
+                self.yac_units_button = units
+                self.yac_caption = layout.itemAt(0).widget()
+        self._rebuild_quick_result_buttons()
         results_layout.addWidget(self.yardage_panel)
         self.gain_origin = label("Calculated from the next play · edit Gain to override")
         self.gain_origin.setStyleSheet("color:#8d949a;font-size:10px;")
@@ -920,7 +980,7 @@ class ClipDetailsV3(ClipEditor):
         actions = QWidget()
         actions.setObjectName("V3QuickActions")
         actions_layout = QVBoxLayout(actions)
-        actions_layout.setContentsMargins(10, 10, 10, 12)
+        actions_layout.setContentsMargins(0, 10, 0, 12)
         actions_layout.setSpacing(5)
         action_heading = QHBoxLayout()
         action_title = label("Actions")
@@ -932,6 +992,7 @@ class ClipDetailsV3(ClipEditor):
         self.action_template.setAccessibleName("Action template")
         action_heading.addWidget(self.action_template)
         self.edit_actions_button = QPushButton("Edit 8")
+        tint_button(self.edit_actions_button, "neutral")
         self.edit_actions_button.setToolTip("Customize the eight shortcuts in this template")
         self.edit_actions_button.clicked.connect(self._edit_action_shortcuts)
         action_heading.addWidget(self.edit_actions_button)
@@ -959,21 +1020,30 @@ class ClipDetailsV3(ClipEditor):
         self.action_template.currentTextChanged.connect(self._sync_action_buttons)
         self.detail_edits["action"].currentTextChanged.connect(self._sync_action_buttons)
         self._quick_layout.addWidget(actions)
+        self._quick_layout.addWidget(self.play_timing)
         self._sync_action_buttons()
         self.detail_edits["action"].lineEdit().setPlaceholderText("Select actions or type separated by ;")
         self.detail_edits["action"].setToolTip("Select multiple actions, such as Coverage; PBU; Blitz. Click again to remove one.")
+        self.notes_panel = QFrame()
+        self.notes_panel.setProperty("gradingGroup", "true")
+        notes_layout = QVBoxLayout(self.notes_panel)
+        notes_layout.setContentsMargins(0, 10, 0, 12)
+        notes_layout.setSpacing(7)
         notes_heading = QHBoxLayout()
-        notes_heading.addWidget(label("Notes"), 1)
+        notes_title = label("Notes")
+        notes_title.setStyleSheet("font:600 15px 'IBM Plex Sans';color:#eef1f3;")
+        notes_heading.addWidget(notes_title, 1)
         self.expand_notes_button = QPushButton("Expand notes")
         self.expand_notes_button.setCheckable(True)
         tint_button(self.expand_notes_button, "neutral")
         self.expand_notes_button.toggled.connect(self._resize_notes)
         notes_heading.addWidget(self.expand_notes_button)
-        self._quick_layout.addLayout(notes_heading)
-        self._quick_layout.addWidget(self.notes_edit)
+        notes_layout.addLayout(notes_heading)
+        notes_layout.addWidget(self.notes_edit)
+        self._quick_layout.addWidget(self.notes_panel)
         self._resize_notes()
         self.notes_edit.setTabChangesFocus(True)
-        self.notes_edit.setPlaceholderText("Add a note…")
+        self.notes_edit.setPlaceholderText("What stood out on this play?")
         self.quick_name_label = label("Clip name / Auto")
         self._quick_layout.addWidget(self.quick_name_label)
         self._quick_name_row = QHBoxLayout()
@@ -1069,10 +1139,13 @@ class ClipDetailsV3(ClipEditor):
         self._form_layout.removeWidget(self.details_section)
         self.advanced_details_section.body_layout.addWidget(self.details_section)
         self.quick_rows.setStyleSheet("""
-            QWidget#V3QuickRows { background: #0d0f12; color: #e6e8e6; }
+            QWidget#V3QuickRows { background: #11171b; color: #e6e8e6; }
             QWidget[gradingGroup="true"], QWidget#V3QuickResults, QWidget#V3QuickActions,
-            QFrame[quickRow="true"] { background: #171a1f; border: 1px solid #303640; border-radius: 6px; }
+            QFrame[quickRow="true"] { background: transparent; border: none; border-bottom: 1px solid #3b4751; border-radius: 0; }
             QWidget[gradingGroup="true"] QFrame[quickRow="true"] { background: transparent; border: none; }
+            QFrame#V3GainPanel { background:#101619; border:1px solid #344049; border-radius:3px; }
+            QFrame#V3GainPanel[selected="true"] { background:#204a35; border:2px solid #249356; }
+            QFrame#V3YacPanel { background:transparent; border:none; }
             QLabel { color: #e6e8e6; background: transparent; font-family: 'IBM Plex Sans'; font-size: 13px; border: none; }
             QComboBox, QLineEdit, QPlainTextEdit { background: #0d0e10; color: #e6e8e6;
                 border: 1px solid #262a2f; border-radius: 3px; padding: 4px 6px;
@@ -1091,7 +1164,7 @@ class ClipDetailsV3(ClipEditor):
             QPushButton#V3QuickAutoName:focus { border-color: #ffc27b; }
             QPushButton#V3QuickAutoName:disabled { color: #8d949a; border-color: #262a2f; }
             QToolButton[quickResult="true"] { background: #111214; color: #e6e8e6;
-                border: 1px solid #262a2f; border-radius: 3px; padding: 5px 7px; font-size: 12px; }
+                border: 1px solid #262a2f; border-radius: 3px; padding: 5px 7px; font: 12px 'IBM Plex Sans'; }
             QToolButton[quickResult="true"]:hover { background: #1c1f23; border-color: #3a4046; }
             QToolButton[quickResult="true"]:focus { border-color: #ffc27b; }
             QToolButton[quickResult="true"]:pressed { background: #0a0b0c; }
@@ -1185,39 +1258,18 @@ class ClipDetailsV3(ClipEditor):
 
     def _resize_notes(self, *_args):
         expanded = hasattr(self, "expand_notes_button") and self.expand_notes_button.isChecked()
-        self.notes_edit.setFixedHeight(180 if expanded else 54)
+        self.notes_edit.setFixedHeight(180 if expanded else 76)
         if hasattr(self, "expand_notes_button"):
             self.expand_notes_button.setText("Collapse notes" if expanded else "Expand notes")
-
-    def _pair_quick_rows(self, first, second):
-        index = self._quick_layout.indexOf(first)
-        pair = QWidget()
-        pair.setProperty("gradingGroup", "true")
-        pair.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
-        layout = QHBoxLayout(pair)
-        layout.setContentsMargins(10, 3, 10, 3)
-        layout.setSpacing(8)
-        for row in (first, second):
-            self._quick_layout.removeWidget(row)
-            row.layout().setDirection(QHBoxLayout.Direction.TopToBottom)
-            # The shared group already owns horizontal padding.
-            row.layout().setContentsMargins(0, 8, 0, 8)
-            title = row.layout().itemAt(0).widget()
-            title.setMinimumWidth(0)
-            title.setMaximumWidth(16777215)
-            row.setMinimumWidth(0)
-            row.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
-            layout.addWidget(row, 1)
-        self._quick_layout.insertWidget(index, pair)
 
     def _quick_row(self, caption: str, control: QWidget) -> QFrame:
         row = QFrame()
         row.setProperty("quickRow", "true")
         layout = QHBoxLayout(row)
-        layout.setContentsMargins(10, 8, 10, 8)
+        layout.setContentsMargins(0, 4, 0, 6)
         layout.setSpacing(8)
         title = label(caption.replace("&", "&&"))
-        title.setFixedWidth(144)
+        title.setFixedWidth(112)
         title.setBuddy(control)
         layout.addWidget(title)
         control.setMinimumWidth(0)
@@ -1226,6 +1278,17 @@ class ClipDetailsV3(ClipEditor):
         control.show()
         self._quick_layout.addWidget(row)
         return row
+
+    def _edit_secondary_players(self) -> None:
+        self.secondary_entry.show()
+        current = self.secondary_entry.text().rstrip()
+        if current and not current.endswith(","):
+            # Opening the entry prepares an append without staging a metadata edit.
+            blocked = self.secondary_entry.blockSignals(True)
+            self.secondary_entry.setText(current + ", ")
+            self.secondary_entry.blockSignals(blocked)
+        self.secondary_entry.setFocus()
+        self.secondary_entry.setCursorPosition(len(self.secondary_entry.text()))
 
     def _previous_drive_clip(self):
         provider = getattr(self, "previous_clip_provider", None)
@@ -1408,16 +1471,19 @@ class ClipDetailsV3(ClipEditor):
         players = tuple(dict.fromkeys(detail_service.split_players(d.get("other_players", ""))))
         if players != getattr(self, "_secondary_players", None):
             self._secondary_players = players
+            self._secondary_flow.removeWidget(self.add_secondary_button)
             self._secondary_flow.clear()
             for name in players:
                 button = QToolButton()
                 button.setText(name + " ×")
                 button.setProperty("quickResult", "true")
+                button.setMaximumWidth(max(80, self.width() - 148))
+                button.setToolTip(name + " — remove secondary player")
                 button.setAccessibleName("Remove secondary player " + name)
                 button.clicked.connect(lambda _checked=False, n=name: self.detail_edits["other_players"].setText(
                     ", ".join(p for p in self._secondary_players if p != n)))
                 self._secondary_flow.addWidget(button)
-            self.secondary_chips.setVisible(bool(players))
+            self._secondary_flow.addWidget(self.add_secondary_button)
         carried = [d.get(k, "") for k in ("quarter", "quarterback") if d.get(k) and d.get(k) == (
             self._carried_quarterback if k == "quarterback" else self.logging_defaults.get(k))]
         self.carry_hint.setText((" · ".join(carried) + " · carried forward; change before saving") if self._default_eligible and carried else "")
@@ -1446,8 +1512,11 @@ class ClipDetailsV3(ClipEditor):
         for value, button in self.quick_result_buttons.items():
             selected = result_service.has_result(stored, value)
             button.setChecked(selected)
-            caption = CAPTIONS.get(value, value)
-            button.setText(("✓ " if selected else "") + caption.replace("&", "&&"))
+            self._update_result_caption(value, button)
+        selected_gain = result_service.has_result(stored, "Gain")
+        if self.gain_panel.property("selected") != selected_gain:
+            self.gain_panel.setProperty("selected", selected_gain)
+            self._refresh_widget_style(self.gain_panel)
         gain = parse_yards(d.get("yards", ""))
         self.gain_status.setText("Not entered" if gain is None else f"{gain:+d} yd")
         yac = parse_yards(d.get("yac", ""))
@@ -1468,21 +1537,7 @@ class ClipDetailsV3(ClipEditor):
             button.clicked.connect(lambda _checked=False, v=value: self._set_result_from_chip(v))
             self._quick_result_flow.addWidget(button)
         self.quick_result_extras.setVisible(self._quick_result_flow.count() > 0)
-        previous = self.detail_edits["player_name"]
-        for button in self.quick_result_buttons.values():
-            QWidget.setTabOrder(previous, button)
-            previous = button
-        for index in range(self._quick_result_flow.count()):
-            button = self._quick_result_flow.itemAt(index).widget()
-            QWidget.setTabOrder(previous, button)
-            previous = button
-        QWidget.setTabOrder(previous, self.quick_result_more)
-        action_chain = [self.quick_result_more, self.quick_result_edit, *self.quick_gain_buttons.values(),
-                        self.gain_decrease_btn, self.detail_edits["yards"], self.gain_increase_btn, self.detail_edits["yac"],
-                        self.yac_decrease_btn, self.yac_increase_btn, self.action_template, self.edit_actions_button, *self.action_buttons,
-                        self.detail_edits["action"], self.notes_edit]
-        for before, after in zip(action_chain, action_chain[1:]):
-            QWidget.setTabOrder(before, after)
+        self._set_quick_tab_order()
         self._sync_quick_name_label()
         self.context_panel.refresh()
         _, distance = parse_down_distance(d.get("down_distance", ""))
@@ -1536,12 +1591,19 @@ class ClipDetailsV3(ClipEditor):
         while grid.count():
             widget = grid.takeAt(0).widget()
             widget.hide()
-            widget.deleteLater()
+        for button in self.quick_result_buttons.values():
+            button.hide()
+            button.deleteLater()
         self.quick_result_buttons = {}
+        self.yardage_panel.layout().insertWidget(0, self.gain_panel)
+        self.gain_caption.show()
+        self.yac_caption.show()
+        self.gain_panel.show()
         choices = DEFAULT_SHORTCUTS if self._v3_shortcuts is None else self._v3_shortcuts
-        for index, value in enumerate(unique_results(choices)[:16]):
+        position = 0
+        for value in unique_results(choices)[:16]:
             button = self._choice_button(CAPTIONS.get(value, value), value)
-            button.setFixedHeight(30)
+            button.setFixedHeight(36)
             button.setToolTip(value + " — click to add or remove")
             tint_button(button, "neutral")
             if value == "Penalty":
@@ -1552,8 +1614,98 @@ class ClipDetailsV3(ClipEditor):
             else:
                 button.clicked.connect(lambda _=False, v=value: self._set_result_from_chip(v))
             self.quick_result_buttons[value] = button
-            grid.addWidget(button, index // 4, index % 4)
-            grid.setColumnStretch(index % 4, 1)
+            if value in {"Gain", "YAC"}:
+                panel = self.gain_panel if value == "Gain" else self.yac_panel
+                caption = self.gain_caption if value == "Gain" else self.yac_caption
+                caption.hide()
+                button.setFixedHeight(28)
+                button.setStyleSheet("QPushButton {background:transparent;color:#e6e8e6;border:0;padding:0;font:11px 'IBM Plex Sans';} QPushButton:focus {border:1px solid #ffc27b;} QPushButton:hover {color:#c9f2d7;}")
+                panel.layout().insertWidget(0, button, 1 if value == "Gain" else 0)
+                if value == "YAC":
+                    button.setFixedWidth(44)
+                    button.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+                    continue
+                if position % 4 == 3:
+                    position += 1
+                self.yardage_panel.layout().removeWidget(panel)
+                grid.addWidget(panel, position // 4, position % 4, 1, 2)
+                position += 2
+            else:
+                grid.addWidget(button, position // 4, position % 4)
+                position += 1
+            button.show()
+        for column in range(4):
+            grid.setColumnStretch(column, 1)
+
+    def _update_result_caption(self, value, button) -> None:
+        prefix = "✓ " if button.isChecked() and (value != "Gain" or self.width() >= 360) else ""
+        caption = prefix + CAPTIONS.get(value, value)
+        width = max(20, button.width() - 6)
+        if value not in {"Gain", "YAC"} and button.fontMetrics().horizontalAdvance(caption) > width:
+            lines = caption.rsplit(" ", 1) if " " in caption else [caption]
+            caption = "\n".join(button.fontMetrics().elidedText(line, Qt.TextElideMode.ElideRight, width) for line in lines)
+        button.setText(caption.replace("&", "&&"))
+
+    def _set_quick_tab_order(self) -> None:
+        chain = [*self.quick_play_buttons.values(), self.quick_play,
+                 *self.quarter_buttons.values(), self.quick_ball,
+                 *self.down_buttons.values(), self.context_panel.distance_edit,
+                 *self.distance_buttons.values(), self.detail_edits["player_name"]]
+        chain.extend(self._secondary_flow.itemAt(i).widget() for i in range(self._secondary_flow.count()))
+        chain.extend((self.secondary_entry, self.quick_result_more, self.quick_result_edit))
+        for value, button in self.quick_result_buttons.items():
+            if value == "YAC":
+                continue
+            chain.append(button)
+            if value == "Gain":
+                chain.extend((self.gain_decrease_btn, self.detail_edits["yards"],
+                              self.gain_units_button, self.gain_increase_btn))
+        if "Gain" not in self.quick_result_buttons:
+            chain.extend((self.gain_decrease_btn, self.detail_edits["yards"],
+                          self.gain_units_button, self.gain_increase_btn))
+        if "YAC" in self.quick_result_buttons:
+            chain.append(self.quick_result_buttons["YAC"])
+        chain.extend((self.detail_edits["yac"], self.yac_units_button))
+        chain.extend(self._quick_result_flow.itemAt(i).widget() for i in range(self._quick_result_flow.count()))
+        chain.extend((self.action_template, self.edit_actions_button, *self.action_buttons,
+                      self.detail_edits["action"], *self.play_timing.focus_controls,
+                      self.expand_notes_button, self.notes_edit, self.detail_edits["quarterback"],
+                      self.quarterback_scope, self.drive_apply, self.new_drive, self.number_clips_button,
+                      self.title_edit, self.autoname_btn, self.apply_btn, self.save_next_btn))
+        for before, after in zip(chain, chain[1:]):
+            QWidget.setTabOrder(before, after)
+
+    def _reflow_situation(self) -> None:
+        wide = self.width() >= 390
+        if wide == getattr(self, "_situation_wide", None):
+            return
+        self._situation_wide = wide
+        grid = self._situation_layout
+        for title, control in self._situation_fields:
+            grid.removeWidget(title)
+            grid.removeWidget(control)
+        grid.removeWidget(self.distance_strip)
+        for column in range(4):
+            grid.setColumnStretch(column, 0)
+        for index, (title, control) in enumerate(self._situation_fields):
+            row, column = divmod(index, 2)
+            title.setMinimumWidth(0)
+            title.setMaximumWidth(54 if wide else 16777215)
+            grid.addWidget(title, row if wide else row * 2, column * 2 if wide else column)
+            grid.addWidget(control, row if wide else row * 2 + 1, column * 2 + 1 if wide else column)
+        grid.setColumnStretch(1 if wide else 0, 3)
+        grid.setColumnStretch(3 if wide else 1, 2)
+        grid.addWidget(self.distance_strip, 2 if wide else 4, 0, 1, 4 if wide else 2)
+        self.distance_strip.layout().setDirection(QHBoxLayout.Direction.LeftToRight if wide else QHBoxLayout.Direction.TopToBottom)
+        self._distance_heading.setMinimumWidth(74 if wide else 0)
+        self._distance_heading.setMaximumWidth(74 if wide else 16777215)
+        columns = 10 if wide else 5
+        for button in self.distance_buttons.values():
+            self._distance_picks.removeWidget(button)
+        for column in range(10):
+            self._distance_picks.setColumnStretch(column, 1 if column < columns else 0)
+        for index, button in enumerate(self.distance_buttons.values()):
+            self._distance_picks.addWidget(button, index // columns, index % columns)
 
     def _all_result_values(self) -> list[str]:
         return unique_results(
@@ -1651,6 +1803,8 @@ class ClipDetailsV3(ClipEditor):
             return
         if hasattr(self, "quick_rows"):
             self.heading_label.setText("CLIP DETAILS")
+            self.heading_label.setMinimumWidth(0)
+            self.heading_label.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
             self.quick_play_number.setText(f"Play {self._clip.clip_number:03d}" if self._clip else "")
             self.edit_title_btn.hide()
             self.collapse_btn.hide()
@@ -1662,9 +1816,10 @@ class ClipDetailsV3(ClipEditor):
             self.action_bar.hide()
             self.summary_card.hide()
             self._form_layout.setContentsMargins(10, 10, 10, 12)
-            self._quick_layout.setSpacing(8)
+            self._quick_layout.setSpacing(0)
             self._form_layout.setSpacing(4)
             self._form_layout.setAlignment(Qt.AlignmentFlag.AlignTop)
+            self._reflow_situation()
             self._sync_action_buttons()
             self.form_area.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Ignored)
             self._outer_layout.setStretchFactor(self.form_area, 1)
@@ -1684,20 +1839,15 @@ class ClipDetailsV3(ClipEditor):
                     self._details_grid.addWidget(cell, self._details_grid.rowCount(), 0, 1, 2)
                 cell.show()
             self._resize_notes()
+            self.detail_edits["player_name"].setFixedHeight(32)
+            for value, button in self.quick_result_buttons.items():
+                self._update_result_caption(value, button)
             for index in range(self._quick_result_flow.count()):
                 self._quick_result_flow.itemAt(index).widget().setMaximumWidth(max(80, self.width()-194))
             self.details_section.toggle.setText("Export settings")
-            chain = [*self.quick_play_buttons.values(), self.quick_play, *self.quarter_buttons.values(), *self.down_buttons.values(),
-                     *self.distance_buttons.values(), self.context_panel.distance_edit, self.quick_ball,
-                     self.detail_edits["player_name"], self.secondary_entry, self.quick_results,
-                     *self.quick_gain_buttons.values(), self.gain_decrease_btn,
-                     self.detail_edits["yards"], self.gain_increase_btn, self.detail_edits["yac"],
-                     self.action_template, self.edit_actions_button, *self.action_buttons, self.detail_edits["action"],
-                     self.notes_edit, self.detail_edits["quarterback"], self.quarterback_scope, self.drive_apply, self.new_drive,
-                     self.number_clips_button, self.title_edit, self.autoname_btn,
-                     self.apply_btn, self.save_next_btn]
-            for before, after in zip(chain, chain[1:]):
-                QWidget.setTabOrder(before, after)
+            for index in range(self._secondary_flow.count()):
+                self._secondary_flow.itemAt(index).widget().setMaximumWidth(max(80, self.width() - 148))
+            self._set_quick_tab_order()
             return
         for key in ("quarter", "down_distance", "ball_on", "result"):
             self.detail_cells[key].hide()
@@ -1768,6 +1918,14 @@ class ClipDetailsV3(ClipEditor):
             details.pop("yards_inferred_value", None)
         return details
 
+    def _stage_timing_details(self, values: dict) -> None:
+        if self._clip is None or not self.isEnabled():
+            return
+        self._draft_extra_details.update(values)
+        self.play_timing.details = self._collect_details()
+        self.play_timing.refresh()
+        self._mark_unsaved()
+
     def open_field_editor(self) -> None:
         if self._clip is None:
             return
@@ -1832,6 +1990,8 @@ class ClipDetailsV3(ClipEditor):
             self.quarterback_scope.setCurrentIndex(1 if self._default_eligible else 0)
             self.quarterback_scope.blockSignals(blocked)
         super().set_clip(clip)
+        if self.play_timing is not None:
+            self.play_timing.set_clip(clip, self._collect_details())
         if clip and self._default_eligible:
             for key, value in (("quarter", self.logging_defaults.get("quarter", "")),
                                ("quarterback", self._carried_quarterback)):
@@ -1889,6 +2049,8 @@ class ClipDetailsV3(ClipEditor):
                 return False
             if saved:
                 self._draft_extra_details = {}
+                self.play_timing.details = self._collect_details()
+                self.play_timing.refresh()
                 self._pending_drive_action = None
                 if self.pending_logging_defaults is not None:
                     self.set_logging_defaults(self.pending_logging_defaults)

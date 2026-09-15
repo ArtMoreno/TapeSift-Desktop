@@ -136,6 +136,59 @@ class MainWindowV3(MainWindowV2):
         self._tidy_v3_menus()
         self._sync_v3_rail_actions()
         self._bind_source_photos()
+        self._bind_play_timing()
+
+    def _bind_play_timing(self) -> None:
+        panel = self.clip_editor.play_timing
+        self._v3_timing_overlay = QLabel(self.player.video_widget)
+        self._v3_timing_overlay.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+        self._v3_timing_overlay.setStyleSheet(
+            "background:rgba(10,14,16,210);color:#ffc27b;"
+            "font:600 17px 'IBM Plex Mono';padding:7px 10px;border-radius:4px;")
+        self._v3_timing_overlay.hide()
+        self.player.video_widget.installEventFilter(self)
+        panel.display_changed.connect(self._show_play_timer)
+        panel.mark_requested.connect(self._mark_play_timing)
+        panel.seek_requested.connect(self._seek_play_timing)
+        panel.find_snap_requested.connect(self._predicted_snap_requested)
+        self.player.source_frame_presented.connect(self._play_timing_frame)
+        self.player.player.sourceChanged.connect(lambda *_: panel.set_position(None))
+        self._sync_predicted_snap_action()
+
+    def _show_play_timer(self, text: str) -> None:
+        overlay = self._v3_timing_overlay
+        overlay.setText(text)
+        overlay.adjustSize()
+        overlay.move(max(8, self.player.video_widget.width() - overlay.width() - 12), 12)
+        overlay.setVisible(bool(text))
+        overlay.raise_()
+
+    def _play_timing_frame(self, *_args) -> None:
+        panel = self.clip_editor.play_timing
+        selected = panel.clip and panel.clip.id == self._selected_clip_id
+        panel.set_position(self.player.recording_anchor_ms() if selected else None)
+
+    def _mark_play_timing(self, kind: str) -> None:
+        if not self.session or self.session.read_only:
+            return
+        panel = self.clip_editor.play_timing
+        if panel.clip is None or panel.clip.id != self._selected_clip_id:
+            return
+        self.player.shuttle_stop()
+        panel.angle_starts = self.session.detector_angle_starts(panel.clip.id)
+        panel.mark(kind, self.player.recording_anchor_ms())
+
+    def _seek_play_timing(self, position: int) -> None:
+        self.player.shuttle_stop()
+        self.clip_editor.play_timing.set_position(None)
+        self.player.seek_to(position)
+
+    def _sync_predicted_snap_action(self) -> None:
+        super()._sync_predicted_snap_action()
+        if hasattr(self, "_v3_timing_overlay"):
+            panel = self.clip_editor.play_timing
+            panel.angle_starts = self.session.detector_angle_starts(self._selected_clip_id) if self.session else ()
+            self._play_timing_frame()
 
     def _build_shortcuts(self) -> None:
         super()._build_shortcuts()
@@ -2209,6 +2262,8 @@ class MainWindowV3(MainWindowV2):
 
     def eventFilter(self, watched, event) -> bool:  # noqa: N802
         player = getattr(self, "player", None)
+        if player is not None and watched is player.video_widget and event.type() == QEvent.Type.Resize and hasattr(self, "_v3_timing_overlay"):
+            self._show_play_timer(self._v3_timing_overlay.text())
         if player is not None and watched is player.attribute_grid:
             grid = player.attribute_grid
             kind = event.type()
@@ -2475,6 +2530,7 @@ class MainWindowV3(MainWindowV2):
         self._decorate_v3_ledger_rows()
         clip = self.session.get_clip(clip_id) if self.session else None
         self._update_play_field_ribbon(clip.details if clip else {})
+        self._sync_predicted_snap_action()
 
     def _build_window_menu(self) -> None:
         self.window_menu = QMenu("&Window", self)

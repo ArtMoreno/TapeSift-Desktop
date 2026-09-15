@@ -270,6 +270,9 @@ def _row_to_dataclass(row: sqlite3.Row) -> LibraryRow:
         opponent=row["opponent"] or "")
 
 
+UNSET_GAME_YEAR = "__unset__"
+
+
 def search(text: str = "", tags: list[str] | None = None,
            project_path: str = "", opponent: str = "", player: str = "",
            player_highlighted_only: bool = False,
@@ -283,7 +286,7 @@ def search(text: str = "", tags: list[str] | None = None,
     params: list[str] = []
     if game_year:
         clauses.append("game_year = ?")
-        params.append(game_year)
+        params.append("" if game_year == UNSET_GAME_YEAR else game_year)
     if project_path:
         clauses.append("project_path = ?")
         params.append(project_path)
@@ -330,13 +333,21 @@ def search(text: str = "", tags: list[str] | None = None,
     return [_row_to_dataclass(r) for r in rows]
 
 
-def projects() -> list[tuple[str, str]]:
-    """(project_name, project_path) for every indexed project."""
+def projects(*, game_year: str = "", opponent: str = "") -> list[tuple[str, str]]:
+    """Indexed games, optionally narrowed by year and opponent."""
+    clauses, params = [], []
+    if game_year:
+        clauses.append("game_year = ?")
+        params.append("" if game_year == UNSET_GAME_YEAR else game_year)
+    if opponent:
+        clauses.append("opponent = ?")
+        params.append(opponent)
+    where = " WHERE " + " AND ".join(clauses) if clauses else ""
     try:
         conn = _connect()
         rows = conn.execute(
-            "SELECT DISTINCT project_name, project_path, game_year FROM library_clips "
-            "ORDER BY project_name").fetchall()
+            "SELECT DISTINCT project_name, project_path, game_year FROM library_clips"
+            + where + " ORDER BY game_year DESC, project_name", params).fetchall()
         conn.close()
         return [(f"{r['game_year']} · {r['project_name']}" if r['game_year'] else r['project_name'], r["project_path"]) for r in rows]
     except sqlite3.DatabaseError:

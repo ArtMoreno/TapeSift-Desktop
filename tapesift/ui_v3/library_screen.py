@@ -151,6 +151,16 @@ class ResultRowDelegateV3(ResultRowDelegateV2):
                   _recorded_play_family(row), row.result, row.player_name)
         x = rect.left() + 86
         for i, (value, width) in enumerate(zip(values, self.column_widths(rect.width()))):
+            if i == 1:
+                self._draw_text(painter, QRect(x, rect.top() + 3, width, 21),
+                                row.project_name, font, QColor("#c3cbc8"))
+                detail_font = QFont(font)
+                detail_font.setPixelSize(11)
+                identity = f"{row.game_year or 'Year not set'} · {row.opponent or 'Opponent not set'}"
+                self._draw_text(painter, QRect(x, rect.top() + 24, width, 18),
+                                identity, detail_font, QColor("#8d949a"))
+                x += width
+                continue
             self._draw_text(painter, QRect(x, rect.top(), width, rect.height()),
                             value or "—", title_font if i == 0 else font,
                             QColor("#e6e8e6" if i == 0 else "#8d949a"))
@@ -166,6 +176,7 @@ class LibrarySearchScreenV3(LibrarySearchScreenV2):
 
     def __init__(self, *args, **kwargs) -> None:
         self._library_catalog_empty = True
+        self._library_game_scope = None
         super().__init__(*args, **kwargs)
         self.setProperty("shellV3Library", "true")
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
@@ -177,6 +188,7 @@ class LibrarySearchScreenV3(LibrarySearchScreenV2):
         self._install_empty_states()
         self.year_combo = QComboBox()
         self.year_combo.addItem("All years", "")
+        self.year_combo.addItem("Year not set", library_service.UNSET_GAME_YEAR)
         self.year_combo.setAccessibleName("Filter Library by game year")
         self.year_combo.setProperty("libraryFilter", True)
         self.year_combo.currentIndexChanged.connect(self._run_search)
@@ -198,9 +210,27 @@ class LibrarySearchScreenV3(LibrarySearchScreenV2):
         filters = self._outer_layout.itemAt(5).layout()
         while filters.count():
             filters.takeAt(0)
+        filter_groups = QVBoxLayout()
+        filter_groups.setSpacing(10)
+        filters.addLayout(filter_groups)
+        identity_row = QHBoxLayout()
+        identity_row.setSpacing(12)
+        filter_groups.addLayout(identity_row)
+        self._library_identity_controls = (self.year_combo, self.opponent_combo, self.project_combo)
+        for title, control in zip(("YEAR", "OPPONENT", "GAME"), self._library_identity_controls):
+            group = QVBoxLayout()
+            group.setSpacing(4)
+            caption = QLabel(title)
+            caption.setStyleSheet("color:#a8b5ad;font-size:11px;font-weight:600;")
+            caption.setBuddy(control)
+            group.addWidget(caption)
+            group.addWidget(control)
+            control.setAccessibleName("Filter Library by " + title.lower())
+            identity_row.addLayout(group, 1 if title == "YEAR" else 2)
+        self.project_combo.setItemText(0, "All games")
         self._library_filter_grid = QGridLayout()
         self._library_filter_grid.setSpacing(8)
-        filters.addLayout(self._library_filter_grid)
+        filter_groups.addLayout(self._library_filter_grid)
         main = self._library_main_box
         main.removeWidget(self._library_workbench)
         self._library_ledger = QWidget()
@@ -1059,8 +1089,16 @@ class LibrarySearchScreenV3(LibrarySearchScreenV2):
             label.setFixedWidth(width)
         base_widths = getattr(self, "_library_filter_widths", ())
         if hasattr(self, "_library_filter_grid"):
-            controls = [control for control, _ in base_widths] + [self.clear_filters_button]
-            columns = 5 if self.width() < 1500 else 10
+            primary = self._library_identity_controls
+            for control in primary:
+                control.setMinimumWidth(0)
+                control.setMaximumWidth(16777215)
+                control.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Fixed)
+                arrow = self._library_filter_arrows.get(control)
+                if arrow is not None:
+                    arrow.setGeometry(control.width() - 23, 1, 22, 32)
+            controls = [control for control, _ in base_widths if control not in primary] + [self.clear_filters_button]
+            columns = 4 if self.width() < 1500 else 7
             for index, control in enumerate(controls):
                 self._library_filter_grid.removeWidget(control)
                 self._library_filter_grid.addWidget(control, index // columns, index % columns)
@@ -1141,13 +1179,39 @@ class LibrarySearchScreenV3(LibrarySearchScreenV2):
 
     def refresh(self) -> None:
         if hasattr(self, "year_combo"):
-            self._refill_combo(self.year_combo, "All years", library_service.game_years())
+            self._refill_game_years()
+        self._library_game_scope = None
         super().refresh()
         clips, projects = library_service.stats()
         self.stats_label.setText(f"{clips} CLIPS / {projects} PROJECTS")
         self.masthead_stats.setText(self.stats_label.text())
         self.library_section_label.setToolTip(self.stats_label.text())
         self._sync_empty_state(clips == 0)
+
+    def _refill_game_years(self) -> None:
+        current = self.year_combo.currentData()
+        with QSignalBlocker(self.year_combo):
+            self.year_combo.clear()
+            self.year_combo.addItem("All years", "")
+            for year in library_service.game_years():
+                self.year_combo.addItem(year, year)
+            self.year_combo.addItem("Year not set", library_service.UNSET_GAME_YEAR)
+            self.year_combo.setCurrentIndex(max(0, self.year_combo.findData(current)))
+
+    def _run_search(self) -> None:
+        if hasattr(self, "year_combo"):
+            scope = (self.year_combo.currentData() or "", self.opponent_combo.currentData() or "")
+            if scope != self._library_game_scope:
+                games = library_service.projects(game_year=scope[0], opponent=scope[1]) if any(scope) else library_service.projects()
+                current = self.project_combo.currentData()
+                with QSignalBlocker(self.project_combo):
+                    self.project_combo.clear()
+                    self.project_combo.addItem("All games", "")
+                    for name, path in games:
+                        self.project_combo.addItem(name, path)
+                    self.project_combo.setCurrentIndex(max(0, self.project_combo.findData(current)))
+                self._library_game_scope = scope
+        super()._run_search()
 
     def _save_game_year(self):
         row = getattr(self, "_editing_row", None)
@@ -1165,18 +1229,11 @@ class LibrarySearchScreenV3(LibrarySearchScreenV2):
         draft = [(edit, edit.text()) for edit in edits]
         notes = self.preview_notes.toPlainText()
         filtered_year = self.year_combo.currentData()
-        self._refill_combo(self.year_combo, "All years", library_service.game_years())
+        self._refill_game_years()
         with QSignalBlocker(self.year_combo):
             if filtered_year:
-                self.year_combo.setCurrentIndex(max(0, self.year_combo.findData(year)))
-        selected = self.project_combo.currentData()
-        blocker = QSignalBlocker(self.project_combo)
-        self.project_combo.clear()
-        self.project_combo.addItem("All projects", "")
-        for name, path in library_service.projects():
-            self.project_combo.addItem(name, path)
-        self.project_combo.setCurrentIndex(max(0, self.project_combo.findData(selected)))
-        del blocker
+                self.year_combo.setCurrentIndex(max(0, self.year_combo.findData(year or library_service.UNSET_GAME_YEAR)))
+        self._library_game_scope = None
         self._search_timer.stop()
         self._run_search()
         if not any(result.clip_uid == row.clip_uid for result in self._results):

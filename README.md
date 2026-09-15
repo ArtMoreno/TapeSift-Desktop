@@ -14,9 +14,10 @@ Football film review, clip editing, and searchable play breakdowns for Windows a
 
 - Open game film, mark clips manually, or review suggested play boundaries.
 - Use J/K/L transport, pause and resume, and inspect individual frames.
-- Record quarters, situations, play types, results, players, and notes.
+- Log down and distance together, enter yardage beside Gain, and add players and notes in compact Clip Details.
+- Enable the optional Play timer, confirm or mark the snap, and mark release for time to throw. Measurements follow film time and save with the clip; predicted snaps remain estimates until confirmed.
 - Edit visible Tag Map rows with the keyboard; hidden rows return space to the video.
-- Find plays across projects in the Clip Library.
+- Find plays across projects in the Clip Library with Year, Opponent, and Game filters, including games without a year.
 - Export individual clips, reels, player cutups, and field summaries.
 
 Play detection produces suggestions that need review. Editing and detection run locally. **First Read is optional**, disabled by default, and sends selected still-frame contact sheets directly to the configured provider using a supplied API key. See [privacy and security](SECURITY.md).

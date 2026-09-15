@@ -1219,12 +1219,12 @@ class AttributeGrid(QWidget):
         if getattr(self, "_field_surface", None):
             # Flat semantic fills stay opaque over the field and its watermark.
             segmented = len(entries) > 1 and rect.width() >= 42 * len(entries)
-            painter.fillRect(rect, QColor(entries[0][1]).darker(165 if primary else 245))
+            painter.fillRect(rect, QColor(entries[0][1]).darker(115 if primary else 145))
             for part, (label, color) in enumerate(entries):
                 if segmented:
                     cell = QRectF(rect.x() + rect.width()*part/len(entries), rect.y(),
                                   rect.width()/len(entries), rect.height())
-                    painter.fillRect(cell, QColor(color).darker(245))
+                    painter.fillRect(cell, QColor(color).darker(145))
                     painter.fillRect(QRectF(cell.x(), cell.y(), 3, cell.height()), QColor(color))
                     painter.setPen(C_CELL_TEXT)
                     text = painter.fontMetrics().elidedText(label, Qt.TextElideMode.ElideRight,

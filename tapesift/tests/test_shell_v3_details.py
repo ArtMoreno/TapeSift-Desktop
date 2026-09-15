@@ -9,6 +9,82 @@ from tapesift.ui_core.main_window_workflow import MainWindowWorkflow
 IDS=["cfbd:team:2390","cfbd:team:57"]
 
 
+def test_play_timing_follows_film_and_saves_with_undo(editor, tmp_path):
+    from tapesift.services import snap_prediction_service as snap_service
+    from tapesift.services.project_service import ProjectSession
+    from tapesift.ui_v3.play_timing import timing_marks
+
+    session = ProjectSession.create("Timing", tmp_path, tmp_path / "out")
+    try:
+        clip = session.add_clip(Clip(1000, 10000, details={"formation": "Shotgun"}))
+        clip.analysis[snap_service.PREDICTION_KEY] = {
+            "predictor_id": snap_service.PREDICTOR_ID,
+            "predictor_version": snap_service.PREDICTOR_VERSION,
+            "source_ms": 2000, "clip_start_ms": 1000, "clip_end_ms": 10000,
+        }
+        editor.edit_started.connect(lambda _: session.checkpoint("edit timing"))
+        editor.clip_edited.connect(lambda _: session.commit())
+        editor.set_clip(clip)
+        panel = editor.play_timing
+        assert panel.body.isHidden()
+        panel.enabled_check.click()
+        assert not panel.body.isHidden()
+        assert "Estimated" in panel.status_label.text()
+        assert "timing_enabled" not in clip.details
+        panel.set_position(1500)
+        assert panel.elapsed_label.text() == "0.00 s"
+        panel.set_position(4430)
+        assert panel.elapsed_label.text() == "2.43 s"
+        panel.set_position(3000)
+        assert panel.elapsed_label.text() == "1.00 s"
+        panel.mark("release", None)
+        panel.mark("release", 1999)
+        assert "timing_release_ms" not in panel.details
+        panel.angle_starts = (1000, 6000)
+        panel.mark("release", 7000)
+        assert "timing_release_ms" not in panel.details
+        panel.set_position(7000)
+        assert panel.elapsed_label.text() == "—"
+        panel.set_position(4430)
+        panel.mark("release", 4430)
+        assert panel.throw_label.text() == "Time to throw: 2.43 s · Estimated"
+        clip.analysis[snap_service.PREDICTION_KEY]["source_ms"] = 2200
+        panel.refresh()
+        assert "2.43 s" in panel.throw_label.text()
+        panel.confirm_button.click()
+        assert panel.throw_label.text() == "Time to throw: 2.43 s"
+        panel.overlay_check.click()
+        panel.mark("snap", 2100)
+        assert panel.throw_label.text() == "Time to throw: 2.33 s"
+        editor.notes_edit.setPlainText("Keep this note")
+        assert editor._apply()
+        stored = ProjectSession.open(session.db_path)
+        try:
+            saved = stored.get_clip(clip.id)
+            assert timing_marks(saved, saved.details) == (2100, 4430, True)
+            assert saved.details["timing_overlay"] == "1"
+            assert saved.details["formation"] == "Shotgun"
+            assert saved.notes == "Keep this note"
+        finally:
+            stored.close()
+        session.undo()
+        editor.set_clip(session.get_clip(clip.id))
+        assert editor.play_timing.body.isHidden()
+        session.redo()
+        editor.set_clip(session.get_clip(clip.id))
+        assert editor.play_timing.throw_label.text() == "Time to throw: 2.33 s"
+        panel.clear_release_button.click()
+        assert panel.throw_label.text() == "Time to throw: —"
+        assert editor._apply()
+        assert "timing_release_ms" not in session.get_clip(clip.id).details
+        editor.set_clip(Clip(12000, 16000))
+        assert panel.body.isHidden() and panel.position is None
+        assert timing_marks(clip, {"timing_snap_ms": "bad"}) == (None, None, False)
+        assert timing_marks(clip, {"timing_snap_ms": "999999"}) == (None, None, False)
+    finally:
+        session.close()
+
+
 def test_action_templates_edit_persist_and_save_without_erasing_hidden_details(editor, tmp_path, monkeypatch):
     from PySide6.QtWidgets import QDialog, QDialogButtonBox, QLineEdit
     from tapesift.core.config import AppSettings
@@ -279,10 +355,9 @@ def test_pinned_controls_wheel_protection_and_yardage_results(editor, app, tmp_p
         assert editor.save_next_btn.mapTo(editor, QPoint()).y() == save_y
         editor.grab().save(str(tmp_path / "pinned-bottom.png"))
         assert editor.form_area.horizontalScrollBar().maximum() == 0
-        for control in (editor.detail_edits["yac"], editor.yac_decrease_btn, editor.yac_increase_btn):
-            assert editor.yac_panel.rect().contains(control.geometry())
-        assert editor.detail_edits["yac"].geometry().bottom() < editor.yac_decrease_btn.y()
-        assert editor.yac_decrease_btn.geometry().right() < editor.yac_increase_btn.x()
+        yac = editor.detail_edits["yac"]
+        assert yac.height() <= 34
+        assert yac.parentWidget().rect().contains(yac.geometry())
         editor.quick_result_buttons["Reception"].click()
         result = editor.detail_edits["result"]
         assert set(split_results(result.text())) == {"Reception", "Completion"}
@@ -313,7 +388,11 @@ def test_pinned_controls_wheel_protection_and_yardage_results(editor, app, tmp_p
 
 @pytest.fixture(scope="module")
 def app():
-    return QApplication.instance() or QApplication([])
+    from tapesift.ui_v3.fonts import load_v3_fonts
+    application = QApplication.instance() or QApplication([])
+    # MainWindowV3 registers these before constructing the shipped inspector.
+    load_v3_fonts()
+    return application
 
 @pytest.fixture
 def editor(app):
@@ -420,19 +499,20 @@ def test_selected_quick_rows_keep_order_and_use_live_save_controls(editor, app, 
         editor.show()
         app.processEvents()
         controls = [editor.quarter_buttons["Q1"], editor.down_buttons["1"],
-                    editor.quick_ball,
                     editor.detail_edits["player_name"],
-                    editor.quick_results, editor.detail_edits["action"], editor.notes_edit,
+                    editor.quick_results, editor.detail_edits["action"], editor.play_timing, editor.notes_edit,
                     editor.context_panel.mini_field, editor.qb_row, editor.qb_scope_row]
         tops = [control.mapTo(editor.quick_rows, QPoint()).y() for control in controls]
-        assert tops == sorted(tops) and tops[0] == tops[1] and len(set(tops[1:])) == len(tops) - 1
+        assert tops == sorted(tops) and len(set(tops)) == len(tops)
         distance = editor.context_panel.distance_edit
-        distance_group = distance.parentWidget()
-        assert distance_group.parentWidget() == editor.quick_ball.parentWidget()
-        assert distance_group.geometry().top() == editor.quick_ball.geometry().top()
-        assert distance_group.geometry().right() < editor.quick_ball.geometry().left()
+        down = editor.down_buttons["1"]
+        assert down.mapTo(editor, down.rect().center()).y() == distance.mapTo(editor, distance.rect().center()).y()
+        quarter = editor.quarter_buttons["Q1"]
+        assert quarter.mapTo(editor, quarter.rect().center()).y() == editor.quick_ball.mapTo(editor, editor.quick_ball.rect().center()).y()
+        assert down.mapTo(editor, down.rect().topRight()).x() < distance.mapTo(editor, QPoint()).x()
         assert set(editor.distance_buttons) == set(range(1, 11))
-        assert distance.width() >= 120 and editor.quick_ball.width() >= 120
+        assert distance.width() >= 60 and editor.quick_ball.width() >= 60
+        assert 28 <= editor.detail_edits["player_name"].height() <= 34
         assert editor.quick_play.width() >= 70
         assert all(button.isVisibleTo(editor) for button in editor.quick_play_buttons.values())
         run, pass_button = editor.quick_play_buttons["run"], editor.quick_play_buttons["pass"]
@@ -442,7 +522,7 @@ def test_selected_quick_rows_keep_order_and_use_live_save_controls(editor, app, 
         assert editor.pinned_save.isAncestorOf(editor.save_next_btn)
         distance.setFocus()
         QTest.keyClick(distance, Qt.Key.Key_Tab)
-        assert app.focusWidget() == editor.quick_ball
+        assert app.focusWidget() == editor.distance_buttons[1]
         assert not editor.source_photo_panel.isVisibleTo(editor)
         assert not editor.context_panel.offense_combo.isVisibleTo(editor)
         assert not editor.context_panel.side_combo.isVisibleTo(editor)
@@ -867,6 +947,9 @@ def test_quick_logging_defaults_players_and_yardage_save_together(editor):
     editor.quarter_buttons["OT"].click()
     editor.down_buttons["3"].click()
     editor.context_panel.distance_edit.setText("7")
+    assert editor.secondary_entry.isHidden()
+    editor.add_secondary_button.click()
+    assert not editor.secondary_entry.isHidden()
     editor.secondary_entry.setText("Xavier Restrepo, Mark Fletcher")
     editor.quick_result_buttons["Completion"].click()
     assert len(editor.quick_result_buttons) == 16
@@ -906,7 +989,7 @@ def test_quick_logging_defaults_players_and_yardage_save_together(editor):
     assert len(notifications) == 1
 
 
-def test_gain_shortcuts_set_exact_yards_in_one_extra_row_and_save(editor, app, tmp_path):
+def test_gain_menu_shortcuts_and_inline_steps_save_exact_yards(editor, app, tmp_path):
     from PySide6.QtCore import Qt
     from PySide6.QtTest import QTest
     from tapesift.services.project_service import ProjectSession
@@ -923,21 +1006,28 @@ def test_gain_shortcuts_set_exact_yards_in_one_extra_row_and_save(editor, app, t
         editor.resize(380, 760)
         editor.show()
         QTest.qWait(100)
-        editor.form_area.ensureWidgetVisible(editor.quick_gain_buttons[10])
+        editor.form_area.ensureWidgetVisible(editor.gain_panel)
         QTest.qWait(100)
         buttons = list(editor.quick_gain_buttons.values())
         assert len(editor.quick_result_buttons) == 16
+        menu = editor.gain_units_button.menu()
+        menu.popup(editor.gain_units_button.mapToGlobal(editor.gain_units_button.rect().bottomLeft()))
+        QTest.qWait(50)
+        assert menu.isVisible() and all(button.isVisibleTo(menu) for button in buttons)
         assert len({b.y() for b in buttons}) == 1
-        assert buttons[0].mapTo(editor, buttons[0].rect().topLeft()).y() > max(b.mapTo(editor, b.rect().bottomLeft()).y() for b in editor.quick_result_buttons.values())
         assert all(b.parentWidget().rect().contains(b.geometry()) for b in buttons)
         assert all(left.geometry().right() < right.x() for left, right in zip(buttons, buttons[1:]))
         controls = [*buttons, editor.gain_decrease_btn, editor.detail_edits["yards"], editor.gain_increase_btn]
-        assert editor.gain_decrease_btn.y() > editor.detail_edits["yards"].geometry().bottom()
+        assert editor.gain_decrease_btn.geometry().center().y() == editor.detail_edits["yards"].geometry().center().y()
         assert editor.gain_decrease_btn.geometry().right() < editor.gain_increase_btn.x()
         assert all(control.parentWidget().rect().contains(control.geometry()) for control in controls)
         for yards in (5, 10, 20, 20):
+            menu.popup(editor.gain_units_button.mapToGlobal(editor.gain_units_button.rect().bottomLeft()))
+            QTest.qWait(20)
+            assert editor.quick_gain_buttons[yards].isVisibleTo(menu)
             QTest.mouseClick(editor.quick_gain_buttons[yards], Qt.MouseButton.LeftButton)
             assert editor.detail_edits["yards"].text() == str(yards)
+        menu.hide()
         edit = editor.detail_edits["yards"]
         edit.clear()
         editor.gain_decrease_btn.click()
@@ -1170,7 +1260,8 @@ def test_result_picker_custom_library_and_empty_shortcuts_persist(editor, tmp_pa
     assert "Contested reception" in loaded.fixed_details["result"]
 
 
-def test_paired_yardage_and_expandable_notes_preserve_draft(editor, app, tmp_path):
+def test_inline_yardage_and_expandable_notes_preserve_draft(editor, app, tmp_path):
+    from PySide6.QtCore import QPoint
     from PySide6.QtTest import QTest
     from tapesift.ui_v3.theme import stylesheet
     old = app.styleSheet()
@@ -1183,9 +1274,10 @@ def test_paired_yardage_and_expandable_notes_preserve_draft(editor, app, tmp_pat
         QTest.qWait(80)
         editor.quick_gain_buttons[10].click()
         editor.detail_edits["yac"].setText("4")
-        assert editor.detail_edits["yards"].height() >= 38
-        assert editor.gain_panel.y() == editor.yac_panel.y()
-        assert editor.gain_panel.geometry().right() < editor.yac_panel.x()
+        assert editor.detail_edits["yards"].height() <= 34
+        assert editor.gain_panel.isAncestorOf(editor.detail_edits["yards"])
+        assert editor.gain_panel.isAncestorOf(editor.quick_result_buttons["Gain"])
+        assert editor.gain_panel.mapTo(editor, QPoint()).y() < editor.yac_panel.mapTo(editor, QPoint()).y()
         editor.notes_edit.setPlainText("Longer draft notes\nSecond line")
         editor.expand_notes_button.click()
         assert editor.notes_edit.height() == 180
@@ -1195,7 +1287,7 @@ def test_paired_yardage_and_expandable_notes_preserve_draft(editor, app, tmp_pat
         editor.form_area.ensureWidgetVisible(editor.notes_edit)
         editor.grab().save(str(tmp_path / "notes-expanded.png"))
         editor.expand_notes_button.click()
-        assert editor.notes_edit.height() == 54
+        assert editor.notes_edit.height() == 76
         assert editor.notes_edit.toPlainText() == "Longer draft notes\nSecond line"
         assert clip.notes == "Original notes"
         assert editor._apply()

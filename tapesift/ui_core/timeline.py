@@ -1471,7 +1471,7 @@ class Timeline(QWidget):
             # ten pixels wide, and drawing a keyline plus a dark bottom plus a
             # detected cap on each fills the interior with texture instead of
             # colour. Full detail only on blocks wide enough to read.
-            p.setBrush(QColor("#1b252d") if self._ink_blocks else block_colour)
+            p.setBrush(block_colour.darker(115) if self._ink_blocks else block_colour)
             p.drawRect(x1, lane_top, width, BAND_H)
             if width >= BLOCK_KEYLINE_MIN_PX:
                 p.setBrush(block_colour if self._ink_blocks else block_colour.lighter(140))

@@ -99,6 +99,51 @@ def _dispose(screen: LibrarySearchScreenV3, qapp: QApplication) -> None:
     qapp.processEvents()
 
 
+def test_year_and_opponent_narrow_games_without_leaving_a_stale_selection(qapp, settings, monkeypatch, tmp_path):
+    from tapesift.models.clip import Clip
+
+    monkeypatch.setattr(library_service, "catalog_path", lambda: tmp_path / "catalog.db")
+    for path, year, opponent in (("a", "2025", "Central"), ("b", "2024", "Central"),
+                                 ("c", "2025", "North"), ("d", "", "Central")):
+        library_service.write_project_index(path, library_service.build_index_payload(
+            path, "Week 4", "film.mp4", [Clip(0, 5000)], game_year=year, opponent=opponent))
+    screen = LibrarySearchScreenV3(settings)
+    try:
+        screen.refresh()
+        assert screen.project_combo.itemText(0) == "All games"
+        screen.year_combo.setCurrentIndex(screen.year_combo.findData("2025"))
+        assert screen.project_combo.count() == 3
+        screen.project_combo.setCurrentIndex(screen.project_combo.findData("c"))
+        screen.opponent_combo.setCurrentIndex(screen.opponent_combo.findData("Central"))
+        assert screen.project_combo.currentData() == ""
+        assert screen.project_combo.count() == 2
+        assert [r.project_path for r in screen._results] == ["a"]
+        screen.year_combo.setCurrentIndex(screen.year_combo.findData(library_service.UNSET_GAME_YEAR))
+        assert [r.project_path for r in screen._results] == ["d"]
+        screen.refresh()
+        assert screen.year_combo.currentData() == library_service.UNSET_GAME_YEAR
+        assert screen.project_combo.count() == 2
+        def apply_year(path, year):
+            import sqlite3
+            with sqlite3.connect(tmp_path / "catalog.db") as conn:
+                conn.execute("UPDATE library_clips SET game_year=? WHERE project_path=?", (year, path))
+            return True, ""
+        screen.apply_game_year = apply_year
+        screen.results_list.setCurrentRow(0)
+        screen.preview_notes.setPlainText("Unsaved clip note")
+        screen.game_year_edit.setValue(2026)
+        screen.game_year_save.click()
+        assert screen.year_combo.currentData() == "2026"
+        assert screen.project_combo.count() == 2
+        assert screen.project_combo.itemText(1) == "2026 · Week 4"
+        assert screen.preview_notes.toPlainText() == "Unsaved clip note"
+        screen.clear_filters_button.click()
+        assert len(screen._results) == 4
+        assert screen.project_combo.count() == 5
+    finally:
+        _dispose(screen, qapp)
+
+
 def test_search_updates_preview_only_after_result_replacement(
         qapp, settings, monkeypatch):
     rows = [replace(_row(), clip_id=f"clip-{i}", clip_uid=f"project:clip-{i}")
@@ -622,7 +667,8 @@ def test_library_type_column_renders_family_without_inventing_one_from_concept(
         painter.end()
         host.deleteLater()
         qapp.sendPostedEvents(None, QEvent.Type.DeferredDelete)
-    assert painted_text[3] == expected
+    # Game identity now occupies two lines before the source-time column.
+    assert painted_text[4] == expected
 
 
 @pytest.mark.parametrize("width,height", [(1690, 868), (1280, 728)])

@@ -68,6 +68,20 @@ def test_game_year_persists_and_distinguishes_same_named_games(catalog, tmp_path
             session.conn.close()
 
 
+def test_year_opponent_and_game_filters_intersect_and_include_unset_year(catalog):
+    for path, year, opponent in (("a", "2025", "Central"), ("b", "2024", "Central"),
+                                 ("c", "2025", "North"), ("d", "", "Central")):
+        payload = library_service.build_index_payload(
+            path, "Week 4", "film.mp4", [_clip("Pass")], opponent=opponent, game_year=year)
+        library_service.write_project_index(path, payload)
+    assert len(library_service.search(opponent="Central")) == 3
+    assert library_service.projects(game_year="2025", opponent="Central") == [("2025 · Week 4", "a")]
+    assert [r.project_path for r in library_service.search(game_year="2025", opponent="Central", project_path="a")] == ["a"]
+    assert not library_service.search(game_year="2025", project_path="b")
+    assert [r.project_path for r in library_service.search(game_year=library_service.UNSET_GAME_YEAR)] == ["d"]
+    assert library_service.projects(game_year=library_service.UNSET_GAME_YEAR) == [("Week 4", "d")]
+
+
 class TestSearch:
     def test_quarterback_is_searchable_involvement_without_becoming_primary(self, catalog):
         clips = [
