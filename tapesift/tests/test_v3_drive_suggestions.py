@@ -100,7 +100,7 @@ def test_distance_buttons_drive_apply_undo_break_and_failure(tmp_path, monkeypat
         assert reopened.get_clip(second.id).details["drive_start"] == "1"
     finally:
         reopened.conn.close()
-    # Show a pending suggestion, at the real 380px inspector width.
+    # Show a pending suggestion at the real inspector width.
     fifth = session.add_clip(Clip(40000, 46000))
     window._refresh_clip_list()
     window.select_clip(fifth.id, seek=False)
@@ -109,5 +109,7 @@ def test_distance_buttons_drive_apply_undo_break_and_failure(tmp_path, monkeypat
     QTest.qWait(200)
     assert editor.drive_suggestion.isVisible()
     assert editor.drive_apply.width() > 80 and editor.new_drive.width() > 65
-    assert editor.distance_buttons[5].geometry().right() <= editor.context_panel.distance_edit.width()
+    for button in editor.distance_buttons.values():
+        assert button.parentWidget().rect().contains(button.geometry())
+    assert editor.form_area.horizontalScrollBar().maximum() == 0
     assert editor.grab().save(str(tmp_path / "drive-distance-panel.png"))
