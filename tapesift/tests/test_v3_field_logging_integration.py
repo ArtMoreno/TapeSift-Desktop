@@ -169,3 +169,111 @@ def test_failed_commit_keeps_save_next_on_same_clip_and_defaults(tmp_path, monke
     assert first.details == {}
     assert editor.save_state_label.property("state") == "dirty"
     assert "Simulated disk failure" in editor.error_label.text()
+
+
+def test_quarterback_carries_through_tagged_plays_and_stops_after_saved_play(tmp_path, monkeypatch):
+    from copy import deepcopy
+    from PySide6.QtCore import Qt
+    from PySide6.QtTest import QTest
+    from tapesift.ui_v3.workspace_state import ReviewRailState
+
+    window = _window(tmp_path)
+    window._v3_review.set_rail_state(ReviewRailState(True, True))
+    session = ProjectSession.create("QB carry", tmp_path / "projects", tmp_path / "exports")
+    clips = [session.add_clip(Clip(i * 10_000, i * 10_000 + 6000,
+        details={"quarter": "Q2", "run_pass": "Pass", "logging_saved": "1"})) for i in range(6)]
+    clips[4].details["quarterback"] = "Saved QB"
+    session.save()
+    window.session = session
+    window._refresh_clip_list()
+    editor = window.clip_editor
+
+    def select(index):
+        assert window.select_clip(clips[index].id, seek=False)
+        QApplication.processEvents()
+        return editor.detail_edits["quarterback"]
+
+    def scope(value):
+        control = editor.quarterback_scope
+        index = control.findData(value)
+        assert index >= 0, value
+        editor.form_area.ensureWidgetVisible(control)
+        control.showPopup()
+        QTest.keyClick(control.view(), Qt.Key.Key_Home)
+        for _ in range(index):
+            QTest.keyClick(control.view(), Qt.Key.Key_Down)
+        QTest.keyClick(control.view(), Qt.Key.Key_Return)
+        assert control.currentData() == value
+
+    qb = select(0)
+    assert editor.quarterback_scope.currentData() == "forward"
+    qb.lineEdit().setFocus()
+    QTest.keyClicks(qb.lineEdit(), "Starter QB")
+    editor.save_next_btn.click()
+    assert window._selected_clip_id == clips[1].id
+    assert editor.detail_edits["quarterback"].text() == "Starter QB"
+    assert "quarterback" not in clips[1].details  # Selection still only stages a draft.
+    editor.apply_btn.click()
+    assert clips[1].details["quarterback"] == "Starter QB"
+    assert clips[1].details["quarter"] == "Q2"
+    assert select(4).text() == "Saved QB"
+
+    select(1)
+    scope("stop")
+    before_stop = deepcopy(session.project.logging_defaults)
+    with monkeypatch.context() as patch:
+        def fail():
+            raise OSError("QB save failed")
+        patch.setattr(session, "commit", fail)
+        editor.save_next_btn.click()
+        assert window._selected_clip_id == clips[1].id
+        assert session.project.logging_defaults == before_stop
+    editor.save_next_btn.click()
+    assert window._selected_clip_id == clips[2].id
+    assert editor.detail_edits["quarterback"].text() == ""
+    assert session.get_clip(clips[1].id).details["quarterback"] == "Starter QB"
+    window._undo()
+    assert select(2).text() == "Starter QB"
+    window._redo()
+    assert select(2).text() == ""
+    select(1)
+    assert editor.quarterback_scope.currentData() == "stop"
+
+    qb = select(3)
+    QTest.keyClicks(qb.lineEdit(), "Backup QB")
+    scope("forward")
+    editor.apply_btn.click()
+    assert select(5).text() == "Backup QB"
+    assert select(4).text() == "Saved QB"
+    assert select(2).text() == ""
+    select(1)
+    scope("stop")
+    editor.apply_btn.click()
+    assert select(5).text() == "Backup QB"  # Stopping earlier preserves later substitutions.
+
+    # An explicit one-play blank must survive revisiting while carry remains on.
+    qb = select(5)
+    scope("clip")
+    qb.lineEdit().selectAll()
+    QTest.keyClick(qb.lineEdit(), Qt.Key.Key_Backspace)
+    editor.apply_btn.click()
+    select(4)
+    assert select(5).text() == ""
+    # Clearing an assigned QB in Library is also an authoritative blank.
+    library_clip = session.get_clip(clips[4].id)
+    assert window._apply_library_edit(str(session.db_path), library_clip.id, {
+        "clip_title": library_clip.clip_title, "tags": library_clip.tags,
+        "notes": library_clip.notes, "details": {**library_clip.details, "quarterback": ""},
+    }) == (True, "")
+    select(3)
+    assert select(4).text() == ""
+    reopened = ProjectSession.open_read_only(session.db_path)
+    try:
+        assert quarterback_at(reopened.project.logging_defaults, clips[2].start_ms) == ""
+        assert quarterback_at(reopened.project.logging_defaults, clips[5].start_ms) == "Backup QB"
+        assert reopened.get_clip(clips[1].id).details["quarterback"] == "Starter QB"
+        assert reopened.get_clip(clips[4].id).details.get("quarterback", "") == ""
+        assert reopened.get_clip(clips[4].id).details["quarterback_cleared"] == "1"
+        assert reopened.get_clip(clips[5].id).details.get("quarterback", "") == ""
+    finally:
+        reopened.close()

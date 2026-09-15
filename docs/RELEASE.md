@@ -32,6 +32,8 @@ After the runtime-only checks, both clean environments installed the declared de
 
 ## Regression results and open work
 
+The QB carry-forward correction was verified with 24 Linux tests and native XCB and Wayland checks. It covers tagged plays without a QB, explicit Stop while retaining the current QB, saved assignments, later substitutions, save failure/undo, reopening, and explicit blanks saved from Review or Library. The controls remain visible and usable at a 300-pixel inspector width. The final Windows native regression also passed with exit code zero. An additional Windows integration-file run encountered the documented native access violation at `set_timeline_key`; that failure is retained and the full suite remains uncertified.
+
 Every test file was executed on both platforms for the September 13 release: 193 files per initial run. The Linux run recorded 2,779 test cases, with 19 failures, four errors, and 25 platform/environment skips. The Windows run recorded 2,779 cases, with 24 failures and 19 skips. These initial results are retained; subsequent fixes were checked with focused file runs rather than replacing the initial record.
 
 Corrections include unavailable Windows paths on Linux, portable FFmpeg fixtures, renamed sample data, current result normalization and toolbar expectations, test cleanup, and closing a source-photo reference when its host hides. No test files were removed to obtain a passing result.

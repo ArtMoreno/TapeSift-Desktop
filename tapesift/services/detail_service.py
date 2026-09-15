@@ -53,6 +53,11 @@ def merge_editor_details(current: dict[str, str], edited: dict[str, str]) -> dic
             result[key] = value.strip() if key in DETAIL_KEYS else value
         else:
             result.pop(key, None)
+    if result.get("quarterback"):
+        result.pop("quarterback_cleared", None)
+    elif current.get("quarterback", "").strip():
+        # Both Library save paths must preserve a deliberately cleared QB.
+        result["quarterback_cleared"] = "1"
     return result
 
 

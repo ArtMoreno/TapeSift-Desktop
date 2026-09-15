@@ -52,6 +52,13 @@ def test_library_changes_preserve_authoritative_unknowns_and_explicit_removal():
     assert saved=={"game_clock":"12:30","custom":"  exact  ","score:"+IDS[0]:"0","result":"Completion; First Down"}
     assert "custom" not in merge_editor_details(saved,{"custom":""})
     assert "already_deleted" not in saved
+    qb = {"quarterback": "Starter QB", "logging_saved": "1"}
+    cleared = merge_editor_details(qb, {"quarterback": ""})
+    assert cleared == {"logging_saved": "1", "quarterback_cleared": "1"}
+    assert merge_editor_details(cleared, {"quarterback": "Backup QB"}) == {
+        "logging_saved": "1", "quarterback": "Backup QB"}
+    assert "quarterback_cleared" not in merge_editor_details(
+        {"run_pass": "Run"}, {"run_pass": "Pass", "quarterback": ""})
 
 
 def test_legacy_game_identity_and_closed_library_round_trip(tmp_path):
@@ -66,7 +73,7 @@ def test_legacy_game_identity_and_closed_library_round_trip(tmp_path):
     assert session.project.game_team_ids==[]
     assert session.project.name=='Legacy'
     session.project.game_team_ids=IDS.copy()
-    clip=Clip(0,1000,details={"ball_on":"OWN 4","game_clock":"12:30","custom":"  exact  ","offense_team_id":IDS[0],"score:"+IDS[0]:"0"})
+    clip=Clip(0,1000,details={"ball_on":"OWN 4","game_clock":"12:30","custom":"  exact  ","offense_team_id":IDS[0],"score:"+IDS[0]:"0","quarterback":"Starter QB"})
     session.add_clip(clip); session.save(); session.conn.close()
     edit_clip_metadata(path,clip.id,clip_title="Edited",tags=[],notes="Library note",details={"ball_on":"OWN 4","result":"Completion; First Down"})
     reopened=ProjectSession.open(path)
@@ -77,4 +84,6 @@ def test_legacy_game_identity_and_closed_library_round_trip(tmp_path):
     assert saved.details['game_clock']=='12:30'
     assert saved.details['offense_team_id']==IDS[0]
     assert saved.details['score:'+IDS[0]]=='0'
+    assert saved.details.get('quarterback', '') == ''
+    assert saved.details['quarterback_cleared'] == '1'
     reopened.conn.close()

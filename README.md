@@ -82,6 +82,8 @@ Add TapeSift to the desktop application launcher:
 
 Text fields and popups keep their typing keys. With default detail prompts, O opens the details form. With prompts disabled, press A after I/O to name the clip. The in-app guide explains the alternate prompt modes.
 
+For quarterbacks, choose **This + future clips** and save to carry the QB into later clips without an assigned QB, including plays with other details already logged. **Stop after this clip** keeps the current play's QB and stops carrying it forward. **This clip only** makes a one-play correction. Existing QB assignments, explicitly cleared QBs, and later substitutions are preserved; inherited values save with each clip when you save its details.
+
 ## Development and verification
 
 ```sh

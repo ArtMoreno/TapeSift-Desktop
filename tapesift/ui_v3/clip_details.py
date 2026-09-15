@@ -513,6 +513,7 @@ class ClipDetailsV3(ClipEditor):
     def __init__(self, *args, **kwargs) -> None:
         self.logging_defaults = {}
         self._carried_quarterback = ""
+        self._quarterback_default_eligible = False
         self._draft_extra_details = {}
         self._pending_drive_action = None
         self._default_eligible = False
@@ -658,8 +659,9 @@ class ClipDetailsV3(ClipEditor):
         self.quarterback_scope = QComboBox()
         self.quarterback_scope.addItem("This clip only", "clip")
         self.quarterback_scope.addItem("This + future clips", "forward")
+        self.quarterback_scope.addItem("Stop after this clip", "stop")
         self.quarterback_scope.setAccessibleName("Quarterback change scope")
-        self.quarterback_scope.setToolTip("On Save: this clip only, or fill future unlogged clips from this point until the next substitution. Saved assignments stay unchanged.")
+        self.quarterback_scope.setToolTip("On Save: change only this clip, carry the QB into later clips without a QB, or stop carrying after this clip. Existing QB assignments and later substitutions stay unchanged.")
         self.quarterback_scope.currentIndexChanged.connect(self._mark_unsaved)
         self.qb_scope_row = self._quick_row("Apply QB to", self.quarterback_scope)
         self.play_timing = PlayTimingPanel()
@@ -1484,9 +1486,11 @@ class ClipDetailsV3(ClipEditor):
                     ", ".join(p for p in self._secondary_players if p != n)))
                 self._secondary_flow.addWidget(button)
             self._secondary_flow.addWidget(self.add_secondary_button)
-        carried = [d.get(k, "") for k in ("quarter", "quarterback") if d.get(k) and d.get(k) == (
-            self._carried_quarterback if k == "quarterback" else self.logging_defaults.get(k))]
-        self.carry_hint.setText((" · ".join(carried) + " · carried forward; change before saving") if self._default_eligible and carried else "")
+        carried = [d[key] for key, eligible, value in (
+            ("quarter", self._default_eligible, self.logging_defaults.get("quarter")),
+            ("quarterback", self._quarterback_default_eligible, self._carried_quarterback))
+            if eligible and d.get(key) and d[key] == value]
+        self.carry_hint.setText((" · ".join(carried) + " · carried forward; change before saving") if carried else "")
         self.carry_hint.setVisible(bool(self.carry_hint.text()))
         description = " · ".join(d.get(k, "") for k in ("run_pass", "play_type", "play_action") if d.get(k)) or "Not set"
         scramble = d.get("play_type", "").casefold() == "scramble"
@@ -1984,18 +1988,30 @@ class ClipDetailsV3(ClipEditor):
         self._loaded_clip_id = clip.id if clip else None
         eligible = getattr(self, "is_logging_default_eligible", None)
         self._default_eligible = bool(clip and (eligible(clip) if eligible else not clip.details))
+        # Other logged fields do not constitute a quarterback assignment.
+        self._quarterback_default_eligible = bool(clip and not clip.details.get("quarterback")
+            and clip.details.get("quarterback_cleared") != "1")
         self._carried_quarterback = detail_service.quarterback_at(self.logging_defaults, clip.start_ms if clip else 0)
         if hasattr(self, "quarterback_scope"):
+            scope = "forward" if self._quarterback_default_eligible else "clip"
+            changes = self.logging_defaults.get("quarterback_changes", [])
+            for change in changes if isinstance(changes, list) else ():
+                if clip and isinstance(change, dict) and change.get("start_ms") == clip.start_ms:
+                    if change.get("quarterback") == "":
+                        scope = "stop"
+                    elif change.get("quarterback") == clip.details.get("quarterback"):
+                        scope = "forward"
             blocked = self.quarterback_scope.blockSignals(True)
-            self.quarterback_scope.setCurrentIndex(1 if self._default_eligible else 0)
+            self.quarterback_scope.setCurrentIndex(self.quarterback_scope.findData(scope))
             self.quarterback_scope.blockSignals(blocked)
         super().set_clip(clip)
         if self.play_timing is not None:
             self.play_timing.set_clip(clip, self._collect_details())
-        if clip and self._default_eligible:
-            for key, value in (("quarter", self.logging_defaults.get("quarter", "")),
-                               ("quarterback", self._carried_quarterback)):
-                if not clip.details.get(key):
+        if clip:
+            for key, eligible, value in (
+                    ("quarter", self._default_eligible, self.logging_defaults.get("quarter", "")),
+                    ("quarterback", self._quarterback_default_eligible, self._carried_quarterback)):
+                if eligible and not clip.details.get(key):
                     self.detail_edits[key].setText(value)
         if self.source_photo_panel is not None:
             self.source_photo_panel.set_clip(clip)
@@ -2031,10 +2047,17 @@ class ClipDetailsV3(ClipEditor):
             if quarter:
                 self.pending_logging_defaults["quarter"] = quarter
         quarterback = self.detail_edits["quarterback"].text().strip()
-        if self.quarterback_scope.currentData() == "forward" and quarterback != self._carried_quarterback:
+        scope = self.quarterback_scope.currentData()
+        carried = "" if scope == "stop" else quarterback
+        if scope == "stop" or (scope == "forward" and carried != self._carried_quarterback):
             self.pending_logging_defaults = detail_service.with_quarterback_change(
                 self.pending_logging_defaults if self.pending_logging_defaults is not None else self.logging_defaults,
-                self._clip.start_ms, quarterback)
+                self._clip.start_ms, carried)
+        if quarterback:
+            self._draft_extra_details["quarterback_cleared"] = None
+        elif scope == "clip":
+            # An explicit one-play blank must not be refilled on the next visit.
+            self._draft_extra_details["quarterback_cleared"] = "1"
         self._draft_extra_details["logging_saved"] = "1"
         self._save_commit_error = ""
         clip = self._clip
