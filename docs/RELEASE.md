@@ -32,6 +32,10 @@ After the runtime-only checks, both clean environments installed the declared de
 
 ## Regression results and open work
 
+The snap-correction update adds **Correct snap point** to the video's right-click menu. It saves the displayed source frame immediately as a confirmed mark, updates Go to Snap and the timeline, and supports Undo/Redo without clearing unrelated inspector drafts. Original machine predictions remain intact. All 151 focused tests passed on Windows and Linux, covering correction persistence/rollback, snap prediction, timeline, and Clip Details. Native Windows and Linux XCB checks also passed with generated video, note/release drafts, Undo/Redo, later Save, database reopening, navigation, timer updates, and export.
+
+Wayland menu interaction remains unverified: synthetic mouse input caused the popup to close before the action could be selected, and the WSLg session did not expose a window for the real-pointer follow-up. Those failed attempts are retained; the XCB result does not establish Wayland menu behavior.
+
 The QB carry-forward correction was verified with 24 Linux tests and native XCB and Wayland checks. It covers tagged plays without a QB, explicit Stop while retaining the current QB, saved assignments, later substitutions, save failure/undo, reopening, and explicit blanks saved from Review or Library. The controls remain visible and usable at a 300-pixel inspector width. The final Windows native regression also passed with exit code zero. An additional Windows integration-file run encountered the documented native access violation at `set_timeline_key`; that failure is retained and the full suite remains uncertified.
 
 Every test file was executed on both platforms for the September 13 release: 193 files per initial run. The Linux run recorded 2,779 test cases, with 19 failures, four errors, and 25 platform/environment skips. The Windows run recorded 2,779 cases, with 24 failures and 19 skips. These initial results are retained; subsequent fixes were checked with focused file runs rather than replacing the initial record.

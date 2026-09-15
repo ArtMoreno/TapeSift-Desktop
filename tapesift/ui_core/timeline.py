@@ -227,11 +227,12 @@ class TimelineBlock:
     # True for plays that came from automatic detection. Presentation only:
     # it draws a shape cue, never a different colour.
     detected: bool = False
-    # A machine estimate inside the play. It is a seek/snap bookmark only;
-    # clip boundaries and human marks remain authoritative.
+    # A snap bookmark inside the play; a confirmed human mark supersedes
+    # the machine estimate without changing clip boundaries.
     predicted_snap_ms: int | None = None
     snap_confidence: float | None = None
     snap_eligible: bool = False
+    snap_confirmed: bool = False
     # Assigned by the widget, never by the caller. Kept on the block so hit
     # testing and painting agree on exactly one layout.
     lane: int = 0
@@ -1952,6 +1953,8 @@ class Timeline(QWidget):
                     f" ({block.snap_confidence:.0%} confidence)"
                 qualifier = "Predicted snap" if block.snap_eligible else \
                     "Low-confidence snap estimate"
+                if block.snap_confirmed:
+                    qualifier, confidence = "Confirmed snap", ""
                 snap = (
                     f"\n{qualifier}: "
                     f"{format_ms(block.predicted_snap_ms, show_millis=True)}"

@@ -171,6 +171,18 @@ def predict_snap(
     }
 
 
+def snap_marker(clip: Clip) -> dict[str, Any] | None:
+    """Human-confirmed film time takes precedence without rewriting analysis."""
+    if clip.details.get("timing_snap_confirmed") == "1":
+        try:
+            source_ms = int(clip.details["timing_snap_ms"])
+            if clip.start_ms <= source_ms < clip.end_ms:
+                return {"source_ms": source_ms, "confirmed": True}
+        except (KeyError, TypeError, ValueError, OverflowError):
+            pass
+    return cached_prediction(clip)
+
+
 def cached_prediction(clip: Clip) -> dict[str, Any] | None:
     """Return only a current, in-range prediction for this clip geometry."""
     raw = clip.analysis.get(PREDICTION_KEY)

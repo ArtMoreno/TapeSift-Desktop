@@ -2439,6 +2439,13 @@ class VideoPlayer(QWidget):
             text = "Finding..."
             tooltip = "Analyzing the first camera angle for its snap"
             enabled = False
+        elif state == "confirmed":
+            text = "Go to Snap"
+            tooltip = (
+                f"Confirmed snap: {format_ms(int(prediction['source_ms']), show_millis=True)}"
+                " | G jumps here"
+            )
+            enabled = True
         elif state == "ready":
             source_ms = int(prediction.get("source_ms", 0))
             confidence = float(prediction.get("confidence", 0.0))

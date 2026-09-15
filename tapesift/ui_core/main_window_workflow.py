@@ -3466,7 +3466,7 @@ class MainWindowWorkflow:
             len(fragments), fragment_ms)
         timeline_blocks: list[TimelineBlock] = []
         for clip, key, label in categorized:
-            prediction = snap_prediction_service.cached_prediction(clip)
+            prediction = snap_prediction_service.snap_marker(clip)
             timeline_blocks.append(TimelineBlock(
                 start_ms=clip.start_ms,
                 end_ms=clip.end_ms,
@@ -3483,12 +3483,13 @@ class MainWindowWorkflow:
                 ),
                 snap_confidence=(
                     float(prediction.get("confidence", 0.0))
-                    if prediction is not None else None
+                    if prediction is not None and not prediction.get("confirmed") else None
                 ),
                 snap_eligible=(
-                    bool(prediction.get("eligible", False))
+                    bool(prediction.get("eligible") or prediction.get("confirmed"))
                     if prediction is not None else False
                 ),
+                snap_confirmed=bool(prediction and prediction.get("confirmed")),
             ))
         self.player.set_clip_blocks(timeline_blocks)
         self.player.set_attribute_clips(
@@ -3684,12 +3685,15 @@ class MainWindowWorkflow:
         if clip is None:
             self.player.set_predicted_snap_state("disabled")
             return
+        prediction = snap_prediction_service.snap_marker(clip)
+        if prediction is not None and prediction.get("confirmed"):
+            self.player.set_predicted_snap_state("confirmed", prediction)
+            return
         worker = self.snap_prediction_worker
         if worker is not None and worker.isRunning() \
                 and worker.clip_id == clip.id:
             self.player.set_predicted_snap_state("finding")
             return
-        prediction = snap_prediction_service.cached_prediction(clip)
         if prediction is not None:
             self.player.set_predicted_snap_state("ready", prediction)
             return
@@ -3701,12 +3705,16 @@ class MainWindowWorkflow:
 
     def _jump_to_predicted_snap(
             self, clip: Clip, prediction: dict) -> None:
+        # A prediction worker may finish after the user corrected this play.
+        prediction = snap_prediction_service.snap_marker(clip) or prediction
         source_ms = int(prediction["source_ms"])
         source_ms = max(clip.start_ms, min(clip.end_ms, source_ms))
         self.player.shuttle_stop()
         self.player.seek_to(source_ms)
         quality = "Predicted snap" if prediction.get("eligible") else \
             "Low-confidence snap estimate"
+        if prediction.get("confirmed"):
+            quality = "Confirmed snap"
         self.statusBar().showMessage(
             f"{quality} for "
             f"'{clip.clip_title or f'Clip {clip.clip_number}'}': "
@@ -3723,7 +3731,7 @@ class MainWindowWorkflow:
         clip = self.session.get_clip(self._selected_clip_id)
         if clip is None:
             return
-        prediction = snap_prediction_service.cached_prediction(clip)
+        prediction = snap_prediction_service.snap_marker(clip)
         if prediction is not None:
             self._jump_to_predicted_snap(clip, prediction)
             return

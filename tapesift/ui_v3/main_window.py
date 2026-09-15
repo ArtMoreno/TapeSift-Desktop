@@ -147,6 +147,12 @@ class MainWindowV3(MainWindowV2):
             "font:600 17px 'IBM Plex Mono';padding:7px 10px;border-radius:4px;")
         self._v3_timing_overlay.hide()
         self.player.video_widget.installEventFilter(self)
+        self.player.video_widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.player.video_widget.customContextMenuRequested.connect(self._video_context_menu_requested)
+        self._v3_video_context_menu = QMenu(self.player.video_widget)
+        self._v3_correct_snap_action = self._v3_video_context_menu.addAction("Correct snap point")
+        self._v3_correct_snap_action.triggered.connect(self._correct_snap_point)
+        self._v3_snap_context = None
         panel.display_changed.connect(self._show_play_timer)
         panel.mark_requested.connect(self._mark_play_timing)
         panel.seek_requested.connect(self._seek_play_timing)
@@ -154,6 +160,81 @@ class MainWindowV3(MainWindowV2):
         self.player.source_frame_presented.connect(self._play_timing_frame)
         self.player.player.sourceChanged.connect(lambda *_: panel.set_position(None))
         self._sync_predicted_snap_action()
+
+    def _video_context_menu_requested(self, position: QPoint) -> None:
+        self.player.shuttle_stop()
+        context = self._source_photo_context()
+        anchor = self.player.recording_anchor_ms()
+        self._v3_snap_context = (context, anchor)
+        self._v3_correct_snap_action.setEnabled(context is not None and anchor is not None)
+        self._v3_video_context_menu.popup(self.player.video_widget.mapToGlobal(position))
+
+    def _correct_snap_point(self) -> None:
+        context, anchor = self._v3_snap_context or (None, None)
+        self._v3_snap_context = None
+        if (context is None or anchor is None or context != self._source_photo_context()
+                or anchor != self.player.recording_anchor_ms()):
+            self.statusBar().showMessage("Pause on the snap in the selected play, then right-click again.", 5000)
+            return
+        session, clip_id = context[:2]
+        editor = self.clip_editor
+        try:
+            session.correct_snap_point(clip_id, anchor)
+        except Exception as exc:
+            # Rollback replaces Clip objects; keep pending inspector input intact.
+            editor._clip = session.get_clip(clip_id)
+            editor.play_timing.clip = editor._clip
+            self.statusBar().showMessage(f"Snap correction not saved: {exc}", 7000)
+            return
+        # Supersede a staged snap only. Other unsaved fields still await Save.
+        for key in ("timing_snap_ms", "timing_snap_confirmed"):
+            editor._draft_extra_details.pop(key, None)
+        editor.play_timing.details = editor._collect_details()
+        editor.play_timing.refresh()
+        self._refresh_timeline_presentation()
+        self._sync_predicted_snap_action()
+        self._index_current_project()
+        self.statusBar().showMessage(
+            f"Snap corrected to {format_ms(anchor, show_millis=True)}. Saved; Undo is available.", 6000)
+
+    def _undo(self) -> None:
+        if not self._restore_snap_correction("undo"):
+            super()._undo()
+
+    def _redo(self) -> None:
+        if not self._restore_snap_correction("redo"):
+            super()._redo()
+
+    def _restore_snap_correction(self, direction: str) -> bool:
+        session = self.session
+        stack = getattr(session, f"_{direction}_stack", ())
+        if not stack or stack[-1].description != "correct snap point":
+            return False
+        if session.read_only:
+            return True
+        state = session._capture_checkpoint_rollback_state()
+        try:
+            getattr(session, direction)()
+        except Exception as exc:
+            session._restore_checkpoint_rollback_state(state)
+            self.statusBar().showMessage(f"Could not {direction} snap correction: {exc}", 7000)
+        else:
+            self.statusBar().showMessage(f"Snap correction {'undone' if direction == 'undo' else 'redone'}.", 5000)
+            self._index_current_project()
+        # Only the saved snap changed. Rebind restored models without reloading
+        # the inspector, which would erase unrelated unsaved notes and fields.
+        self._refresh_source_photo_binding()
+        editor = self.clip_editor
+        editor.play_timing.clip = editor._clip
+        editor.play_timing.details = editor._collect_details()
+        editor.play_timing.refresh()
+        project = session.project
+        self.clip_list.set_clips(session.clips, project.source_duration_ms,
+            project.naming_template, project.name, self.settings.separator_style)
+        self._decorate_v3_ledger_rows()
+        self._refresh_timeline_presentation()
+        self._sync_predicted_snap_action()
+        return True
 
     def _show_play_timer(self, text: str) -> None:
         overlay = self._v3_timing_overlay

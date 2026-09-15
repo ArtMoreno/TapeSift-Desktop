@@ -651,6 +651,28 @@ class ProjectSession:
             self._restore_checkpoint_rollback_state(state)
             raise
 
+    def correct_snap_point(self, clip_id: str, source_ms: int) -> None:
+        """Persist the displayed snap frame as one undoable user correction."""
+        if self.read_only:
+            raise DatabaseError("This project is open read-only.")
+        clip = self.get_clip(clip_id)
+        if clip is None:
+            raise DatabaseError("The selected clip is no longer in this project.")
+        if type(source_ms) is not int or not clip.start_ms <= source_ms < clip.end_ms:
+            raise DatabaseError("Choose a settled frame within the selected play.")
+        values = {"timing_snap_ms": str(source_ms), "timing_snap_confirmed": "1"}
+        if all(clip.details.get(key) == value for key, value in values.items()):
+            return
+        state = self._capture_checkpoint_rollback_state()
+        try:
+            self.checkpoint("correct snap point")
+            clip.details = dict(clip.details, **values)
+            clip.touch()
+            self.commit()
+        except Exception:
+            self._restore_checkpoint_rollback_state(state)
+            raise
+
     def apply_details_to_clips(
             self, clip_ids: list[str], values: dict[str, str], *,
             preserve_distance: bool = False) -> int:

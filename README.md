@@ -16,6 +16,7 @@ Football film review, clip editing, and searchable play breakdowns for Windows a
 - Use J/K/L transport, pause and resume, and inspect individual frames.
 - Log down and distance together, enter yardage beside Gain, and add players and notes in compact Clip Details.
 - Enable the optional Play timer, confirm or mark the snap, and mark release for time to throw. Measurements follow film time and save with the clip; predicted snaps remain estimates until confirmed.
+- To fix a snap, pause on the correct frame, right-click the video, and choose **Correct snap point**. It saves immediately, updates Go to Snap and the timer, and supports Undo.
 - Edit visible Tag Map rows with the keyboard; hidden rows return space to the video.
 - Find plays across projects in the Clip Library with Year, Opponent, and Game filters, including games without a year.
 - Export individual clips, reels, player cutups, and field summaries.
