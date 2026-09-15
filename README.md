@@ -19,6 +19,7 @@ Football film review, clip editing, and searchable play breakdowns for Windows a
 - To fix a snap, pause on the correct frame, right-click the video, and choose **Correct snap point**. It saves immediately, updates Go to Snap and the timer, and supports Undo.
 - Edit visible Tag Map rows with the keyboard; hidden rows return space to the video.
 - Find plays across projects in the Clip Library with Year, Opponent, and Game filters, including games without a year.
+- Continue on another computer through **File → Shared Projects** using your private synced folder. Saved project versions keep notes, tags, timing, and embedded images; source film stays separate. See [personal sync setup](docs/SHARED_PROJECTS.md).
 - Export individual clips, reels, player cutups, and field summaries.
 
 Play detection produces suggestions that need review. Editing and detection run locally. **First Read is optional**, disabled by default, and sends selected still-frame contact sheets directly to the configured provider using a supplied API key. See [privacy and security](SECURITY.md).

@@ -115,6 +115,8 @@ def _default_fixed_details() -> dict[str, list[str]]:
 class AppSettings:
     # General
     default_project_folder: str = ""
+    shared_projects_folder: str = ""
+    shared_project_links: dict[str, dict[str, str]] = field(default_factory=dict)
     default_output_folder: str = ""
     autosave_interval_seconds: int = 30
     recent_project_count: int = 10

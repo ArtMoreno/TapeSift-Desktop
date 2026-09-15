@@ -48,6 +48,7 @@ from tapesift.ui_v3.theme import V3_REVIEW_CONTROL_CENTER_MATERIAL
 from tapesift.ui_v3.transport_surface import V3TransportSurface
 from tapesift.ui_v3.jog_console import V3JogConsole
 from tapesift.ui_v3.workspace_state import ReviewRailState, WorkspaceStateV3
+from tapesift.ui_v3.shared_projects import SharedProjects
 
 
 log = logging.getLogger(__name__)
@@ -137,6 +138,7 @@ class MainWindowV3(MainWindowV2):
         self._sync_v3_rail_actions()
         self._bind_source_photos()
         self._bind_play_timing()
+        self.shared_projects = SharedProjects(self)
 
     def _bind_play_timing(self) -> None:
         panel = self.clip_editor.play_timing
@@ -1624,11 +1626,22 @@ class MainWindowV3(MainWindowV2):
         self._return_focus_to_playback()
 
     def _activate_session(self, session) -> bool:
+        shared = getattr(self, "shared_projects", None)
+        try:
+            lock = shared.lock_for(session) if shared else None
+        except TapeSiftError as exc:
+            session.conn.close()
+            QMessageBox.warning(self, "Project already open", str(exc))
+            return False
         self._ensure_v3_review()
         if not getattr(session, "read_only", False):
             self._set_recovery_read_only_surface(False)
         if not super()._activate_session(session):
+            if lock is not None and (shared is None or lock is not shared.edit_lock):
+                lock.unlock()
             return False
+        if shared:
+            shared.edit_lock = lock
 
         # Shell V3 opens directly into Review. Keep its visually active play,
         # inspector, and transport actions on one authoritative selection from
@@ -1649,13 +1662,79 @@ class MainWindowV3(MainWindowV2):
             )
         else:
             self._sync_predicted_snap_action()
+        if shared:
+            shared.activated()
         return True
 
     def _close_project(self) -> bool:
+        shared = getattr(self, "shared_projects", None)
+        if shared is not None and not shared.before_close():
+            return False
         closed = super()._close_project()
+        if closed and shared is not None and shared.edit_lock is not None:
+            shared.edit_lock.unlock()
+            shared.edit_lock = None
+            shared._edit_lock_key = ""
         if closed and self.session is None and not self._app_closing:
             self._set_recovery_read_only_surface(False)
         return closed
+
+    def _open_project(self, db_path: str) -> None:
+        if self.session and Path(self.session.db_path).resolve() == Path(db_path).resolve():
+            self.stack.setCurrentWidget(self.workspace)
+            return
+        shared = getattr(self, "shared_projects", None)
+        if shared is not None and shared.is_shared_path(db_path):
+            QMessageBox.information(self, "Open a shared project",
+                "Use File → Shared Projects to open a local working copy. Saved shared versions stay unchanged.")
+            shared.show()
+            return
+        super()._open_project(db_path)
+
+    def _apply_library_edit(self, project_path, clip_id, changes):
+        apply = super()._apply_library_edit
+        return self.shared_projects.library_edit(project_path, lambda: apply(project_path, clip_id, changes))
+
+    def _apply_library_game_year(self, project_path, value):
+        apply = super()._apply_library_game_year
+        return self.shared_projects.library_edit(project_path, lambda: apply(project_path, value))
+
+    def _new_project(self, name, folder, output_folder):
+        shared = getattr(self, "shared_projects", None)
+        if shared and shared.is_shared_path(Path(folder) / "project.tapesift"):
+            QMessageBox.information(self, "Choose a local project folder",
+                "Create the working project outside your shared folder, then use File → Shared Projects to share it.")
+            return
+        super()._new_project(name, folder, output_folder)
+
+    def _replace_recent(self, old_path, new_path):
+        shared = getattr(self, "shared_projects", None)
+        if shared:
+            shared.moved(old_path, new_path)
+        try:
+            super()._replace_recent(old_path, new_path)
+        except OSError as exc:
+            if not shared or not (new_path and shared.binding(new_path)):
+                raise
+            shared._set_message(f"Project moved; recent-project preferences could not be saved: {exc}", error=True)
+
+    def _rename_open_project(self):
+        shared = getattr(self, "shared_projects", None)
+        if shared and (not shared.wait() or (self.session and shared.binding(self.session.db_path) and not shared.save_draft())):
+            return
+        super()._rename_open_project()
+
+    def _rename_project(self, db_path, new_name):
+        shared = getattr(self, "shared_projects", None)
+        if shared and not shared.wait():
+            return
+        super()._rename_project(db_path, new_name)
+
+    def _delete_project(self, db_path):
+        shared = getattr(self, "shared_projects", None)
+        if shared and not shared.wait():
+            return
+        super()._delete_project(db_path)
 
     def _v3_home_drop_path(self, event):
         if self.stack.currentWidget() is not self.start_screen \
@@ -2662,7 +2741,8 @@ class MainWindowV3(MainWindowV2):
         file_menu, playback = menus["File"], menus["Playback"]
         first = file_menu.actions()[0]
         for title, slot in (("New Project…", self.start_screen._new_project),
-                            ("Open Existing…", self.start_screen._open_project)):
+                            ("Open Existing…", self.start_screen._open_project),
+                            ("Shared Projects…", lambda: self.shared_projects.show())):
             action = QAction(title, self)
             action.triggered.connect(slot)
             file_menu.insertAction(first, action)

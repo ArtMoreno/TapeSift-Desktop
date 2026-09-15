@@ -994,7 +994,10 @@ class MainWindowWorkflow:
                         "Could not suppress legacy unclassified detector clips")
                 self._repoint_project_output_off_system_drive()
                 self.settings.add_recent_project(str(session.db_path))
-                self.settings.save()
+                try:
+                    self.settings.save()
+                except OSError:
+                    log.exception("Project opened, but recent-project preferences could not be saved")
                 recovery_service.mark_open(
                     session.db_path, session.project.name)
             self.rename_action.setEnabled(not read_only)
